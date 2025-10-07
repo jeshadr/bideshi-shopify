@@ -1,0 +1,30 @@
+# Shopify-specific files
+shopify.theme.toml
+shopify.theme.*.toml
+
+# Node / build artifacts
+node_modules/
+dist/
+build/
+.cache/
+.DS_Store
+
+# Environment & credentials
+.env
+.env.*
+*.pem
+*.key
+*.crt
+
+# OS / editor junk
+*.log
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Backup or temp files
+*.bak
+*.tmp
+*.old
