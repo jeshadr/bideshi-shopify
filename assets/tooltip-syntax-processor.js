@@ -7,8 +7,8 @@
 
 class TooltipSyntaxProcessor {
   constructor() {
-    // Updated regex to handle HTML content within the brackets
-    // Uses non-greedy matching and handles nested brackets
+    // More robust regex that handles HTML content properly
+    // Looks for the pattern: [[[content|content]]] where | is not inside HTML tags
     this.syntaxPattern = /\[\[\[(.*?)\|(.*?)\]\]\]/gs;
     this.init();
   }
@@ -61,22 +61,12 @@ class TooltipSyntaxProcessor {
     const originalText = textNode.textContent;
     
     // Check if the text contains our syntax
-    if (!this.syntaxPattern.test(originalText)) {
+    if (!originalText.includes('[[')) {
       return;
     }
 
-    // Reset regex lastIndex
-    this.syntaxPattern.lastIndex = 0;
-
-    // Replace syntax with HTML
-    const newHTML = originalText.replace(this.syntaxPattern, (match, term, definition) => {
-      // Clean up the term and definition (but preserve HTML)
-      const cleanTerm = term.trim();
-      const cleanDefinition = definition.trim();
-      
-      // Create tooltip HTML - don't escape HTML in term and definition
-      return `<span data-tooltip="${cleanDefinition}" class="has-tooltip">${cleanTerm}</span>`;
-    });
+    // Use a more sophisticated parser for HTML content
+    const newHTML = this.parseTooltipSyntax(originalText);
 
     // Only replace if content changed
     if (newHTML !== originalText) {
@@ -90,6 +80,67 @@ class TooltipSyntaxProcessor {
       }
       parent.removeChild(textNode);
     }
+  }
+
+  parseTooltipSyntax(text) {
+    let result = text;
+    let startIndex = 0;
+    
+    while (true) {
+      // Find the start of a tooltip pattern
+      const startMatch = result.indexOf('[[[', startIndex);
+      if (startMatch === -1) break;
+      
+      // Find the corresponding closing ]]]
+      const endMatch = result.indexOf(']]]', startMatch + 3);
+      if (endMatch === -1) break;
+      
+      // Extract the content between [[[ and ]]]
+      const content = result.substring(startMatch + 3, endMatch);
+      
+      // Find the pipe separator that's not inside HTML tags
+      const pipeIndex = this.findPipeOutsideTags(content);
+      
+      if (pipeIndex !== -1) {
+        const term = content.substring(0, pipeIndex).trim();
+        const definition = content.substring(pipeIndex + 1).trim();
+        
+        // Create the tooltip HTML
+        const tooltipHTML = `<span data-tooltip="${definition}" class="has-tooltip">${term}</span>`;
+        
+        // Replace the original pattern with the tooltip HTML
+        result = result.substring(0, startMatch) + tooltipHTML + result.substring(endMatch + 3);
+        
+        // Update startIndex to continue from after the replacement
+        startIndex = startMatch + tooltipHTML.length;
+      } else {
+        // No valid pipe found, skip this pattern
+        startIndex = endMatch + 3;
+      }
+    }
+    
+    return result;
+  }
+
+  findPipeOutsideTags(content) {
+    let inTag = false;
+    let tagDepth = 0;
+    
+    for (let i = 0; i < content.length; i++) {
+      const char = content[i];
+      
+      if (char === '<') {
+        inTag = true;
+        tagDepth++;
+      } else if (char === '>') {
+        inTag = false;
+        tagDepth--;
+      } else if (char === '|' && !inTag && tagDepth === 0) {
+        return i;
+      }
+    }
+    
+    return -1;
   }
 
   setupMutationObserver() {
@@ -123,11 +174,7 @@ class TooltipSyntaxProcessor {
 
   // Manual processing method for testing
   processText(text) {
-    return text.replace(this.syntaxPattern, (match, term, definition) => {
-      const cleanTerm = term.trim();
-      const cleanDefinition = definition.trim();
-      return `<span data-tooltip="${cleanDefinition}" class="has-tooltip">${cleanTerm}</span>`;
-    });
+    return this.parseTooltipSyntax(text);
   }
 }
 
