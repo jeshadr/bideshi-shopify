@@ -24,9 +24,45 @@ class ArticleTooltips extends HTMLElement {
     tooltipElements.forEach(element => {
       this.setupTooltip(element);
     });
+
+    // Set up mutation observer to detect new tooltips
+    this.setupMutationObserver();
+  }
+
+  setupMutationObserver() {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              // Check if the added node has tooltip data
+              if (node.hasAttribute && node.hasAttribute('data-tooltip')) {
+                this.setupTooltip(node);
+              }
+              // Check if the added node contains tooltips
+              const tooltips = node.querySelectorAll && node.querySelectorAll('[data-tooltip]');
+              if (tooltips) {
+                tooltips.forEach(tooltip => this.setupTooltip(tooltip));
+              }
+            }
+          });
+        }
+      });
+    });
+
+    // Observe changes within this element
+    observer.observe(this, {
+      childList: true,
+      subtree: true
+    });
   }
 
   setupTooltip(element) {
+    // Skip if already set up
+    if (element.classList.contains('has-tooltip')) {
+      return;
+    }
+
     // Add a class for styling
     element.classList.add('has-tooltip');
     
