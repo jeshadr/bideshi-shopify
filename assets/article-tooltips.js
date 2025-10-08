@@ -18,18 +18,19 @@ class ArticleTooltips extends HTMLElement {
   }
 
   init() {
-    // Find all elements with tooltip data
-    const tooltipElements = this.querySelectorAll('[data-tooltip]');
+    // Find all elements with tooltip data in the page scope
+    const root = document.querySelector('.blog-post-content') || document;
+    const tooltipElements = root.querySelectorAll('[data-tooltip]');
     
     tooltipElements.forEach(element => {
       this.setupTooltip(element);
     });
 
     // Set up mutation observer to detect new tooltips
-    this.setupMutationObserver();
+    this.setupMutationObserver(root);
   }
 
-  setupMutationObserver() {
+  setupMutationObserver(root) {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'childList') {
@@ -50,8 +51,8 @@ class ArticleTooltips extends HTMLElement {
       });
     });
 
-    // Observe changes within this element
-    observer.observe(this, {
+    // Observe changes within the root element
+    observer.observe(root, {
       childList: true,
       subtree: true
     });
@@ -194,4 +195,19 @@ class ArticleTooltips extends HTMLElement {
 }
 
 customElements.define('article-tooltips', ArticleTooltips);
+
+// Fallback initialization for cases where the custom element might not be properly set up
+document.addEventListener('DOMContentLoaded', () => {
+  // Wait a bit for the syntax processor to run
+  setTimeout(() => {
+    const existingTooltips = document.querySelectorAll('[data-tooltip]:not(.has-tooltip)');
+    if (existingTooltips.length > 0) {
+      // Create a temporary instance to handle existing tooltips
+      const tempInstance = new ArticleTooltips();
+      existingTooltips.forEach(element => {
+        tempInstance.setupTooltip(element);
+      });
+    }
+  }, 100);
+});
 
