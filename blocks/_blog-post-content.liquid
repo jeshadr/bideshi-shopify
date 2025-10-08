@@ -23,13 +23,12 @@
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
     cursor: help;
-    color: #ffbb00;
+    color: inherit;
     position: relative;
   }
 
   .has-tooltip:hover {
-    text-decoration-color: #ffbb00;
-    color: #ffbb00;
+    text-decoration-color: var(--color-primary, #0066cc);
   }
 
   /* Tooltip popup */
@@ -52,7 +51,7 @@
 
   .article-tooltip-content {
     background: var(--color-background, #ffffff);
-    color: var(--color-foreground, #000000);
+    color: #ffbb00;
     padding: 12px 16px;
     border-radius: 4px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
