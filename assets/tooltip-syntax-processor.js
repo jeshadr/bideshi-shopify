@@ -7,7 +7,9 @@
 
 class TooltipSyntaxProcessor {
   constructor() {
-    this.syntaxPattern = /\[\[\[([^|]+)\|([^\]]+)\]\]\]/g;
+    // Updated regex to handle HTML content within the brackets
+    // Uses non-greedy matching and handles nested brackets
+    this.syntaxPattern = /\[\[\[(.*?)\|(.*?)\]\]\]/gs;
     this.init();
   }
 
@@ -68,12 +70,12 @@ class TooltipSyntaxProcessor {
 
     // Replace syntax with HTML
     const newHTML = originalText.replace(this.syntaxPattern, (match, term, definition) => {
-      // Clean up the term and definition
+      // Clean up the term and definition (but preserve HTML)
       const cleanTerm = term.trim();
       const cleanDefinition = definition.trim();
       
-      // Create tooltip HTML
-      return `<span data-tooltip="${this.escapeHTML(cleanDefinition)}" class="has-tooltip">${this.escapeHTML(cleanTerm)}</span>`;
+      // Create tooltip HTML - don't escape HTML in term and definition
+      return `<span data-tooltip="${cleanDefinition}" class="has-tooltip">${cleanTerm}</span>`;
     });
 
     // Only replace if content changed
@@ -124,7 +126,7 @@ class TooltipSyntaxProcessor {
     return text.replace(this.syntaxPattern, (match, term, definition) => {
       const cleanTerm = term.trim();
       const cleanDefinition = definition.trim();
-      return `<span data-tooltip="${this.escapeHTML(cleanDefinition)}" class="has-tooltip">${this.escapeHTML(cleanTerm)}</span>`;
+      return `<span data-tooltip="${cleanDefinition}" class="has-tooltip">${cleanTerm}</span>`;
     });
   }
 }
