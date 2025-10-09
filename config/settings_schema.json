@@ -1,16 +1,5 @@
 [
   {
-    "name": "Typography",
-    "settings":[
-      {
-          "type": "font_picker",
-          "id": "heading_font",
-          "label": "Body font",
-          "default": "merriweather_n4"
-      }
-    ]
-  },
-  {
     "name": "theme_info",
     "theme_name": "Horizon",
     "theme_version": "2.0.3",
