@@ -7,9 +7,10 @@
         "id": "bengali_font",
         "label": "Heading font",
         "options": [
-        { "value": "baloo_da_2", "label": "Baloo Da 2" }
+        { "value": "baloo_da_2", "label": "Baloo Da 2" },
+        { "value": "merriweather", "label": "Merriweather" },
       ],
-        "default": "baloo_da_2"
+        "default": "merriweather"
       }
 ]
   },
