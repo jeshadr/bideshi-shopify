@@ -1,5 +1,8 @@
 {% liquid
   assign content = article.excerpt | default: article.content
+  
+  # Remove hardcoded author names from content (e.g., "by Author Name")
+  assign content = content | replace: 'by Myesha Owen Munro', '' | replace: 'by ', '' | strip
 
   if block.settings.type_preset == 'rte' or block.settings.type_preset == 'paragraph'
     assign is_rte = true

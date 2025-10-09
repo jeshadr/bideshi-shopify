@@ -1,0 +1,44 @@
+{%- comment -%}
+  Renders article authors from metafields or default author field
+  
+  @param {object} article - The article object
+  @param {string} separator - Separator between multiple authors (default: ", ")
+{%- endcomment -%}
+
+{%- liquid
+  assign separator = separator | default: ", "
+  assign authors = ""
+  
+  # Check for custom authors metafield (for multiple authors)
+  if article.metafields.custom.custom_authors != blank
+    assign authors = article.metafields.custom.custom_authors
+  # Check for single custom author metafield
+  elsif article.metafields.custom.author != blank
+    assign authors = article.metafields.custom.author
+  # Fallback to default Shopify author
+  elsif article.author != blank
+    assign authors = article.author
+  endif
+  
+  # Clean up the authors string (remove extra spaces, handle multiple authors)
+  assign authors = authors | strip
+  if authors contains separator
+    assign author_array = authors | split: separator
+    assign clean_authors = ""
+    for author in author_array
+      assign clean_author = author | strip
+      if clean_author != blank
+        if clean_authors != blank
+          assign clean_authors = clean_authors | append: separator | append: clean_author
+        else
+          assign clean_authors = clean_author
+        endif
+      endif
+    endfor
+    assign authors = clean_authors
+  endif
+-%}
+
+{%- if authors != blank -%}
+  <span class="article-authors">{{ authors }}</span>
+{%- endif -%}

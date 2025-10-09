@@ -27,7 +27,7 @@
     {%- endif -%}
 
     {%- if block.settings.show_author -%}
-      <span>{{ article.author }}</span>
+      {% render 'article-authors', article: article %}
     {%- endif -%}
   </div>
 {% endif %}
