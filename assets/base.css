@@ -36,6 +36,10 @@ src: local('Georgia Bold Italic'), url('./georgiaz.woff') format('woff');
 }
 
 body {
+  font-family: 'Georgia Regular';
+  font-family: 'Georgia Italic';
+  font-family: 'Georgia Bold';
+  font-family: 'Georgia Bold Italic';
   color: var(--color-foreground);
   background: var(--color-background);
   display: flex;
