@@ -6,29 +6,29 @@
   font-display: swap;
 }
     
+@font-face {
+  font-family: 'Georgia';
+  src: url('{{ "georgiai.woff" | file_url }}') format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
 
-    @font-face {
-    font-family: 'Georgia Italic';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Georgia Italic'), url('georgiai.woff') format('woff');
-    }
-    
+@font-face {
+  font-family: 'Georgia';
+  src: url('{{ "georgiab.woff" | file_url }}') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
-    @font-face {
-    font-family: 'Georgia Bold';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Georgia Bold'), url('georgiab.woff') format('woff');
-    }
-    
-
-    @font-face {
-    font-family: 'Georgia Bold Italic';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Georgia Bold Italic'), url('georgiaz.woff') format('woff');
-    }
+@font-face {
+  font-family: 'Georgia';
+  src: url('{{ "georgiaz.woff" | file_url }}') format('woff');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
 
 * {
   box-sizing: border-box;
