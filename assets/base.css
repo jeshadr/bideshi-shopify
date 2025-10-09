@@ -14,7 +14,9 @@
 }
 
 body {
-  font-family: 'Baloo Da 2';
+  font-family: var(--font-heading, 'Merriweather', Georgia, serif);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
   color: var(--color-foreground);
   background: var(--color-background);
   display: flex;
