@@ -18,6 +18,9 @@
     "
     style="{% render 'spacing-style', settings: block.settings %}"
   >
+    {%- if block.settings.show_author -%}
+      {% render 'article-authors', article: article %}
+    {%- endif -%}
     {%- if block.settings.show_date -%}
       <span>{{- article.published_at | time_tag: format: 'date' -}}</span>
     {%- endif -%}
@@ -26,9 +29,7 @@
       <span>{{ 'content.blog_details_separator' | t }}</span>
     {%- endif -%}
 
-    {%- if block.settings.show_author -%}
-      {% render 'article-authors', article: article %}
-    {%- endif -%}
+    
   </div>
 {% endif %}
 
