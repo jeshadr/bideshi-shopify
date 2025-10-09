@@ -1,5 +1,3 @@
-
-
 <script
   src="{{ 'blog-posts-list.js' | asset_url }}"
   type="module"
@@ -33,7 +31,38 @@
             ref="cards[]"
             data-page="{{ paginate.current_page }}"
           >
+            {%- comment -%}
+              Custom byline for the card. Same precedence as the article page.
+              If your card snippet already prints author, you can remove that there
+              and keep this one, or keep both temporarily while testing.
+            {%- endcomment -%}
+            {%- capture article_byline -%}
+              {%- assign authors = article.metafields.custom.authors.value -%}
+              {%- if authors and authors.size > 0 -%}
+                {%- for a in authors -%}
+                  {%- if a.url != blank -%}
+                    <a href="{{ a.url | escape }}" class="byline-link">{{ a.name | escape }}</a>
+                  {%- else -%}
+                    {{ a.name | escape }}
+                  {%- endif -%}
+                  {%- unless forloop.last -%}{% if forloop.rindex0 == 1 %} and {% else %}, {% endif %}{%- endunless -%}
+                {%- endfor -%}
+              {%- elsif article.metafields.custom.byline_override != blank -%}
+                {{ article.metafields.custom.byline_override | escape }}
+              {%- else -%}
+                {{ article.author | escape }}
+              {%- endif -%}
+            {%- endcapture -%}
+
+            {% comment %}
+              Render the card; many themes include title/excerpt inside this snippet.
+              We print the byline just after to keep layout simple.
+            {% endcomment %}
             {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+
+            {%- if article_byline != blank -%}
+              <p class="article-byline">by {{ article_byline }}</p>
+            {%- endif -%}
           </div>
         {% endfor %}
       </div>
@@ -62,114 +91,70 @@
     row-gap: var(--rows-gap);
   }
 
-  /**
-   * Apart from the first and second rows in the grid, all remaining blog posts
-   * are arranged in a three-column layout:
-   * +------------+------------+-------------+
-   * |            |            |             |
-   * |  (span 2)  |  (span 2)  |  (span 2)   |
-   * |            |            |             |
-   * +------------+------------+-------------+
-   */
   .blog-post-item {
     --blog-post-card-scale: 0.6;
-
     grid-column: span 2;
-
-    @media screen and (max-width: 749px) {
+  }
+  @media screen and (max-width: 749px) {
+    .blog-post-item {
       --blog-post-card-scale: 0.5;
-
       grid-column: span 6;
     }
   }
 
-  /**
-   * The second row of blog posts has two columns:
-   * +-------------------+-------------------+
-   * |                   |                   |
-   * |  (column span 3)  |  (column span 3)  |
-   * |                   |                   |
-   * +-------------------+-------------------+
-   */
   .blog-post-item:nth-child(2),
   .blog-post-item:nth-child(3) {
     --blog-post-card-scale: 0.8;
-
     grid-column: span 3;
-
-    @media screen and (max-width: 749px) {
+  }
+  @media screen and (max-width: 749px) {
+    .blog-post-item:nth-child(2),
+    .blog-post-item:nth-child(3) {
       --blog-post-card-scale: 0.5;
-
       grid-column: span 6;
     }
   }
 
-  /**
-   * The first row of blog posts has only one column:
-   * +---------------------------------------+
-   * |                                       |
-   * |           (1 column span 6)           |
-   * |                                       |
-   * +---------------------------------------+
-   */
   .blog-post-item:first-child {
     --blog-post-card-scale: 1;
-
     grid-column: span 6;
   }
 
-  /**
-   * When there's no image, the blog post item has a border.
-   */
   .blog-post-item {
     border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20));
     padding: 0 1rem 1rem;
   }
-
   .blog-post-item:has(.blog-post-card__image-container) {
     border: none;
     padding: 0;
   }
+
+  /* Byline on cards */
+  .article-byline {
+    margin: .5rem 1rem 0;
+    color: #6b7280;
+    font-size: .9rem;
+  }
+  .byline-link { text-decoration: none; }
+  .byline-link:hover { text-decoration: underline; }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:names.blog_posts",
   "blocks": [
-    {
-      "type": "@theme"
-    },
-    {
-      "type": "@app"
-    },
-    {
-      "type": "text"
-    },
-    {
-      "type": "icon"
-    },
-    {
-      "type": "image"
-    },
-    {
-      "type": "button"
-    },
-    {
-      "type": "video"
-    },
-    {
-      "type": "group"
-    },
-    {
-      "type": "spacer"
-    },
-    {
-      "type": "_divider"
-    }
+    { "type": "@theme" },
+    { "type": "@app" },
+    { "type": "text" },
+    { "type": "icon" },
+    { "type": "image" },
+    { "type": "button" },
+    { "type": "video" },
+    { "type": "group" },
+    { "type": "spacer" },
+    { "type": "_divider" }
   ],
-  "disabled_on": {
-    "groups": ["header"]
-  },
+  "disabled_on": { "groups": ["header"] },
   "settings": [
     {
       "type": "color_scheme",
@@ -177,10 +162,7 @@
       "label": "t:settings.color_scheme",
       "default": "scheme-1"
     },
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
+    { "type": "header", "content": "t:content.padding" },
     {
       "type": "range",
       "id": "padding-block-start",
