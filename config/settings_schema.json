@@ -3,10 +3,13 @@
     "name": "Typography",
     "settings": [
       {
-        "type": "font_picker",
-        "id": "heading_font",
+        "type": "select",
+        "id": "bengali_font",
         "label": "Heading font",
-        "default": "helvetica_n4"
+        "options": [
+        { "value": "baloo_da_2", "label": "Baloo Da 2" }
+      ],
+        "default": "baloo_da_2"
       }
 ]
   },
