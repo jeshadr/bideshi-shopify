@@ -1,32 +1,33 @@
 @font-face {
-    font-family: 'Georgia Regular';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Georgia Regular'), url('../assets/georgia.woff') format('woff');
-}
-    
-
-@font-face {
-font-family: 'Georgia Italic';
-font-style: normal;
-font-weight: normal;
-src: local('Georgia Italic'), url('../assets/georgiai.woff') format('woff');
+  font-family: 'Georgia';
+  src: url('{{ "georgia.woff" | asset_url }}') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-
 @font-face {
-font-family: 'Georgia Bold';
-font-style: normal;
-font-weight: normal;
-src: local('Georgia Bold'), url('../assets/georgiab.woff') format('woff');
+  font-family: 'Georgia';
+  src: url('{{ "georgiai.woff" | asset_url }}') format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: 'Georgia';
+  src: url('{{ "georgiab.woff" | asset_url }}') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @font-face {
-font-family: 'Georgia Bold Italic';
-font-style: normal;
-font-weight: normal;
-src: local('Georgia Bold Italic'), url('../assets/georgiaz.woff') format('woff');
+  font-family: 'Georgia';
+  src: url('{{ "georgiaz.woff" | asset_url }}') format('woff');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
 }
 
 
