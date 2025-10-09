@@ -1,8 +1,9 @@
 @font-face {
-font-family: "Georgia Regular";
-font-style: normal;
-font-weight: normal;
-src: url("{{ '[georgia]' | file_url }}") format("[woff]");
+  font-family: 'Georgia';
+  src: url('{{ "georgia.woff" | file_url }}') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
     
 
