@@ -3,7 +3,7 @@
 <script src="{{ 'tooltip-syntax-processor.js' | asset_url }}" type="module" fetchpriority="low"></script>
 <script src="{{ 'simple-tooltips.js' | asset_url }}" type="module" fetchpriority="low"></script>
 
-<div class="blog-post-content rte">
+<div class="blog-post-content rte processing-tooltips">
   <rte-formatter>
     {{ article.content }}
   </rte-formatter>
@@ -13,6 +13,16 @@
   .blog-post-content {
     max-width: var(--normal-content-width);
     margin: 0 auto;
+  }
+
+  /* Hide content while tooltips are being processed to prevent FOUC */
+  .blog-post-content.processing-tooltips {
+    opacity: 0;
+    transition: opacity 0.15s ease-in;
+  }
+
+  .blog-post-content.tooltips-ready {
+    opacity: 1;
   }
 
   /* Tooltip trigger styling */

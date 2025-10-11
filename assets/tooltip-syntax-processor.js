@@ -21,8 +21,21 @@ class TooltipSyntaxProcessor {
       this.processContent();
     }
 
+    // Fallback: Always reveal content after a short delay, even if processing fails
+    setTimeout(() => {
+      this.revealContent();
+    }, 300);
+
     // Also process dynamically added content
     this.setupMutationObserver();
+  }
+
+  revealContent() {
+    const contentElements = document.querySelectorAll('.blog-post-content.processing-tooltips');
+    contentElements.forEach(element => {
+      element.classList.remove('processing-tooltips');
+      element.classList.add('tooltips-ready');
+    });
   }
 
   processContent() {
@@ -30,6 +43,14 @@ class TooltipSyntaxProcessor {
     
     contentElements.forEach(element => {
       this.processElement(element);
+    });
+
+    // Remove processing class and reveal content after tooltips are processed
+    contentElements.forEach(element => {
+      if (element.classList.contains('processing-tooltips')) {
+        element.classList.remove('processing-tooltips');
+        element.classList.add('tooltips-ready');
+      }
     });
   }
 
