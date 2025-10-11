@@ -18,7 +18,7 @@
 
 @font-face {
     font-family: 'Georgia';
-    src: url('Georgia-BoldItalic.woff2') format('woff2'),
+    src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Georgia-Italic.woff2?v=1760150472') format('woff2'),
         url('Georgia-BoldItalic.woff') format('woff');
     font-weight: bold;
     font-style: italic;
