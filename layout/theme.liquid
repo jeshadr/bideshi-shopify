@@ -6,6 +6,14 @@
   <head>
     {%- render 'stylesheets' -%}
 
+    {%- liquid
+      render 'meta-tags'
+
+
+      echo 'custom.css' | asset_url | stylesheet_tag: preload: true
+    
+    %}
+
   
     {%- if settings.favicon != blank -%}
       <link
