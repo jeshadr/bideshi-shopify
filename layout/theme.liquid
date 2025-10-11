@@ -6,23 +6,7 @@
   <head>
     {%- render 'stylesheets' -%}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.shopify.com/s/files/1/0714/9659/7540/files/BalooDa2-Regular.woff?v=1760031877" rel="stylesheet">
-     
-    <style>
-  :root {
-    {% case settings.bideshi_font %}
-      {% when 'baloo_da_2' %}
-        --font-heading: 'Baloo Da 2', system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans Bengali", "Noto Sans", sans-serif;
-      {% else %}
-        --font-heading: 'Merriweather', Georgia, "Times New Roman", serif;
-    {% endcase %}
-  }
-</style>
-
-
+  
     {%- if settings.favicon != blank -%}
       <link
         rel="icon"
