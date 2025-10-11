@@ -43,3 +43,13 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Baloo Da 2';
+    src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/BalooDa2-Regular.woff2?v=1760031828') format('woff2'),
+        url('BalooDa2-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
