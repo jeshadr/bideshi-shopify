@@ -98,15 +98,29 @@ class TooltipSyntaxProcessor {
       // Extract the content between [[[ and ]]]
       const content = result.substring(startMatch + 3, endMatch);
       
-      // Find the pipe separator that's not inside HTML tags
-      const pipeIndex = this.findPipeOutsideTags(content);
+      // Find all pipe separators that are not inside HTML tags
+      const pipes = this.findAllPipesOutsideTags(content);
       
-      if (pipeIndex !== -1) {
-        const term = content.substring(0, pipeIndex).trim();
-        const definition = content.substring(pipeIndex + 1).trim();
+      if (pipes.length > 0) {
+        const term = content.substring(0, pipes[0]).trim();
         
-        // Create the tooltip HTML
-        const tooltipHTML = `<span data-tooltip="${definition}" class="has-tooltip">${term}</span>`;
+        // Check if there's a second pipe for image URL
+        let definition, imageUrl;
+        if (pipes.length >= 2) {
+          definition = content.substring(pipes[0] + 1, pipes[1]).trim();
+          imageUrl = content.substring(pipes[1] + 1).trim();
+        } else {
+          definition = content.substring(pipes[0] + 1).trim();
+          imageUrl = '';
+        }
+        
+        // Create the tooltip HTML with optional image attribute
+        let tooltipHTML;
+        if (imageUrl) {
+          tooltipHTML = `<span data-tooltip="${definition}" data-tooltip-image="${imageUrl}" class="has-tooltip">${term}</span>`;
+        } else {
+          tooltipHTML = `<span data-tooltip="${definition}" class="has-tooltip">${term}</span>`;
+        }
         
         // Replace the original pattern with the tooltip HTML
         result = result.substring(0, startMatch) + tooltipHTML + result.substring(endMatch + 3);
@@ -141,6 +155,28 @@ class TooltipSyntaxProcessor {
     }
     
     return -1;
+  }
+
+  findAllPipesOutsideTags(content) {
+    let inTag = false;
+    let tagDepth = 0;
+    const pipes = [];
+    
+    for (let i = 0; i < content.length; i++) {
+      const char = content[i];
+      
+      if (char === '<') {
+        inTag = true;
+        tagDepth++;
+      } else if (char === '>') {
+        inTag = false;
+        tagDepth--;
+      } else if (char === '|' && !inTag && tagDepth === 0) {
+        pipes.push(i);
+      }
+    }
+    
+    return pipes;
   }
 
   setupMutationObserver() {

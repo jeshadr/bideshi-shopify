@@ -66,8 +66,11 @@ class SimpleTooltips {
     // Mark as processed
     element.classList.add('tooltip-processed', 'has-tooltip');
     
-    // Create tooltip element
-    const tooltip = this.createTooltipElement(element.dataset.tooltip);
+    // Create tooltip element with optional image
+    const tooltip = this.createTooltipElement(
+      element.dataset.tooltip,
+      element.dataset.tooltipImage
+    );
     
     // Store reference
     this.tooltips.push({ element, tooltip });
@@ -101,14 +104,28 @@ class SimpleTooltips {
     });
   }
 
-  createTooltipElement(content) {
+  createTooltipElement(content, imageUrl) {
     const tooltip = document.createElement('div');
     tooltip.className = 'article-tooltip-popup';
-    tooltip.innerHTML = `
-      <div class="article-tooltip-content">
-        ${content}
-      </div>
-    `;
+    
+    // Build tooltip content with optional image
+    let tooltipContent = '';
+    if (imageUrl) {
+      tooltipContent = `
+        <div class="article-tooltip-content">
+          <img src="${imageUrl}" alt="Tooltip image" class="tooltip-image" loading="lazy">
+          <div class="tooltip-text">${content}</div>
+        </div>
+      `;
+    } else {
+      tooltipContent = `
+        <div class="article-tooltip-content">
+          ${content}
+        </div>
+      `;
+    }
+    
+    tooltip.innerHTML = tooltipContent;
     document.body.appendChild(tooltip);
     return tooltip;
   }

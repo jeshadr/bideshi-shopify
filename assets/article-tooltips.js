@@ -67,8 +67,11 @@ class ArticleTooltips extends HTMLElement {
     // Add a class for styling
     element.classList.add('has-tooltip');
     
-    // Create tooltip element
-    const tooltip = this.createTooltipElement(element.dataset.tooltip);
+    // Create tooltip element with optional image
+    const tooltip = this.createTooltipElement(
+      element.dataset.tooltip,
+      element.dataset.tooltipImage
+    );
     
     // Mouse events
     element.addEventListener('mouseenter', (e) => {
@@ -101,14 +104,28 @@ class ArticleTooltips extends HTMLElement {
     this.tooltips.push({ element, tooltip });
   }
 
-  createTooltipElement(content) {
+  createTooltipElement(content, imageUrl) {
     const tooltip = document.createElement('div');
     tooltip.className = 'article-tooltip-popup';
-    tooltip.innerHTML = `
-      <div class="article-tooltip-content">
-        ${content}
-      </div>
-    `;
+    
+    // Build tooltip content with optional image
+    let tooltipContent = '';
+    if (imageUrl) {
+      tooltipContent = `
+        <div class="article-tooltip-content">
+          <img src="${imageUrl}" alt="Tooltip image" class="tooltip-image" loading="lazy">
+          <div class="tooltip-text">${content}</div>
+        </div>
+      `;
+    } else {
+      tooltipContent = `
+        <div class="article-tooltip-content">
+          ${content}
+        </div>
+      `;
+    }
+    
+    tooltip.innerHTML = tooltipContent;
     document.body.appendChild(tooltip);
     return tooltip;
   }
