@@ -53,3 +53,14 @@
 }
 
 
+body,
+h1, h2, h3, h4, h5, h6, .hd1, .hd2, .hd3,
+p, span, div,
+ul, ol, li,
+a, button,
+input, select, option,
+label, legend, textarea, small {
+font-family: 'Georgia', sans-serif !important;
+}
+
+
