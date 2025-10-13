@@ -53,12 +53,24 @@
 }
 
 
-body,
-h1, h2, h3, h4, h5, h6, .hd1, .hd2, .hd3,
-p, span, div,
-ul, ol, li,
-a, button,
-input, select, option,
-label, legend, textarea, small {
-font-family: 'Georgia', sans-serif !important;
+/* Global default — body text uses Arial */
+body {
+  font-family: Arial, "Helvetica Neue", Helvetica, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Headings site-wide (optional): use Georgia on headings everywhere */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'GeorgiaCustom', Georgia, "Times New Roman", serif;
+}
+
+/* Accents/badges/buttons that should use Baloo Da 2 */
+.badge, .pill, .fun-title, .price-tag--fun {
+  font-family: 'BalooDa2', Arial, sans-serif;
+}
+
+/* Bangla text: use Akkhor wherever you render bn content */
+:lang(bn), .bn-text {
+  font-family: 'Akkhor', 'Noto Serif Bengali', 'SolaimanLipi', serif;
+}
+
 }
