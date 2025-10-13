@@ -73,4 +73,37 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Akkhor', 'Noto Serif Bengali', 'SolaimanLipi', serif;
 }
 
+/* Blog Article */
+.article-template {
+  font-family: 'GeorgiaCustom', Georgia, "Times New Roman", serif;
+  line-height: 1.8;
+  color: #222;
+}
+
+.article-template h1 {
+  font-family: 'GeorgiaCustom', Georgia, "Times New Roman", serif;
+  font-size: 2.5rem;
+  font-weight: 700; /* bold */
+  margin-bottom: 1rem;
+}
+
+.article-template h2 {
+  font-family: 'GeorgiaCustom', Georgia, "Times New Roman", serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.article-template p {
+  font-family: 'GeorgiaCustom', Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+/* Optional: if your blog has Bangla posts */
+.article-template:lang(bn),
+.article-template .bn-text {
+  font-family: 'Akkhor', 'Noto Serif Bengali', 'SolaimanLipi', serif;
 }
