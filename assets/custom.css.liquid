@@ -40,3 +40,47 @@
         url('BalooDa2-Regular.woff') format('woff');
      font-weight: 400; font-style: normal; font-display: swap;
 }
+
+
+
+/* === Global CSS variables driven by Theme settings === */
+:root{
+  /* Body font stack */
+  --body-font: {% case settings.global_body_font %}
+    {% when 'georgia' %}'Georgia','Times New Roman',Times,serif
+    {% when 'baloo' %}'Baloo Da 2','Arial',sans-serif
+    {% else %}'Arial', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif
+  {% endcase %};
+
+  /* Always include Bengali fallbacks to auto-render Bangla with Akkhor */
+  --body-font-bn-fallback: 'Akkhor','Noto Sans Bengali','Baloo Da 2',sans-serif;
+
+  /* Heading font stack */
+  --heading-font: {% case settings.global_heading_font %}
+    {% when 'baloo' %}'Baloo Da 2','Arial',sans-serif
+    {% when 'arial' %}'Arial', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif
+    {% else %}'Georgia','Times New Roman',Times,serif
+  {% endcase %};
+
+  --body-size: {{ settings.global_body_size }}px;
+  --body-lineheight: {{ settings.global_body_lineheight }};
+  --body-letterspace: {{ settings.global_body_letterspace }}em;
+
+  --heading-weight: {{ settings.global_heading_weight }};
+  --heading-lineheight: {{ settings.global_heading_lineheight }};
+}
+
+/* === Global application === */
+body{
+  font-family: var(--body-font), var(--body-font-bn-fallback);
+  font-size: var(--body-size);
+  line-height: var(--body-lineheight);
+  letter-spacing: var(--body-letterspace);
+}
+
+/* Headings everywhere */
+h1,h2,h3,h4,h5,h6{
+  font-family: var(--heading-font), var(--body-font-bn-fallback);
+  font-weight: var(--heading-weight);
+  line-height: var(--heading-lineheight);
+}
