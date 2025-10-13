@@ -42,6 +42,57 @@
   </div>
 </blog-posts-list>
 
+{% comment %}
+Blog listing typography overrides (Horizon).
+This only affects the blog cards on the /blogs/<handle> pages.
+It respects our custom fonts from assets/custom.css.liquid
+{% endcomment %}
+{%- assign bbf = section.settings.blog_list_body_font -%}
+{%- assign bhf = section.settings.blog_list_heading_font -%}
+{%- if section.settings.blog_list_override_typography -%}
+  <style>
+    /* Scope to this section instance only */
+    blog-posts-list[section-id="{{ section.id }}"] .blog-posts{
+      --blog-list-body-font: {% case bbf %}
+        {% when 'georgia' %}'Georgia','Times New Roman',Times,serif
+        {% when 'baloo' %}'Baloo Da 2','Arial',sans-serif
+        {% else %}'Arial', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif
+      {% endcase %}, 'Akkhor','Noto Sans Bengali','Baloo Da 2',sans-serif;
+
+      --blog-list-heading-font: {% case bhf %}
+        {% when 'baloo' %}'Baloo Da 2','Arial',sans-serif
+        {% when 'arial' %}'Arial', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif
+        {% else %}'Georgia','Times New Roman',Times,serif
+      {% endcase %}, 'Akkhor','Noto Sans Bengali','Baloo Da 2',sans-serif;
+
+      --blog-list-body-size: {{ section.settings.blog_list_body_size }}px;
+      --blog-list-heading-weight: {{ section.settings.blog_list_heading_weight }};
+      --blog-list-heading-lineheight: {{ section.settings.blog_list_heading_lineheight }};
+      /* letter-spacing stored as integer; convert to em */
+      --blog-list-body-letterspace: {{ section.settings.blog_list_body_letterspace | divided_by: 100.0 }}em;
+    }
+
+    /* Apply to card pieces (use multiple selectors to be theme-safe) */
+    blog-posts-list[section-id="{{ section.id }}"] .blog-posts .blog-post-item,
+    blog-posts-list[section-id="{{ section.id }}"] .blog-posts .blog-post-card__content,
+    blog-posts-list[section-id="{{ section.id }}"] .blog-posts .blog-post-card__excerpt{
+      font-family: var(--blog-list-body-font);
+      font-size: var(--blog-list-body-size);
+      letter-spacing: var(--blog-list-body-letterspace);
+    }
+
+    blog-posts-list[section-id="{{ section.id }}"] .blog-posts .blog-post-card__title,
+    blog-posts-list[section-id="{{ section.id }}"] .blog-posts [class*="blog-post-card"] h1,
+    blog-posts-list[section-id="{{ section.id }}"] .blog-posts [class*="blog-post-card"] h2,
+    blog-posts-list[section-id="{{ section.id }}"] .blog-posts [class*="blog-post-card"] h3{
+      font-family: var(--blog-list-heading-font);
+      font-weight: var(--blog-list-heading-weight);
+      line-height: var(--blog-list-heading-lineheight);
+    }
+  </style>
+{%- endif -%}
+
+
 {% stylesheet %}
   /**
    * Blog posts page layout
