@@ -15,29 +15,26 @@
     %}
 
     {%- liquid
-  # Build BODY font stack
+  # BODY font stack
   assign body_stack = "Arial, 'Helvetica Neue', Helvetica, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
   case settings.body_font_family
     when 'georgia'     then assign body_stack = "'Georgia', Georgia, 'Times New Roman', serif"
     when 'baloo_da_2'  then assign body_stack = "'Baloo Da 2', Arial, sans-serif"
     when 'akkhor'      then assign body_stack = "'Akkhor', 'Noto Serif Bengali', serif"
-    when 'arial'       then assign body_stack = "Arial, 'Helvetica Neue', Helvetica, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
   endcase
 
-  # Build HEADING font stack
+  # HEADING font stack
   assign heading_stack = "'Georgia', Georgia, 'Times New Roman', serif"
   case settings.heading_font_family
     when 'baloo_da_2' then assign heading_stack = "'Baloo Da 2', Arial, sans-serif"
     when 'akkhor'     then assign heading_stack = "'Akkhor', 'Noto Serif Bengali', serif"
-    when 'georgia'    then assign heading_stack = "'Georgia', Georgia, 'Times New Roman', serif"
   endcase
 
-  # Build ACCENT font stack
+  # ACCENT font stack
   assign accent_stack = "'Baloo Da 2', Arial, sans-serif"
   case settings.accent_font_family
     when 'georgia'    then assign accent_stack = "'Georgia', Georgia, 'Times New Roman', serif"
     when 'akkhor'     then assign accent_stack = "'Akkhor', 'Noto Serif Bengali', serif"
-    when 'baloo_da_2' then assign accent_stack = "'Baloo Da 2', Arial, sans-serif"
   endcase
 
   # Sizes / line heights
