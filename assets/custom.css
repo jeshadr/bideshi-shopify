@@ -1,109 +1,31 @@
-@font-face {
-    font-family: 'Georgia';
-    src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Georgia-Italic.woff2?v=1760150472') format('woff2'),
-        url('Georgia-Italic.woff') format('woff');
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
+/* Example @font-face (replace URLs with your real ones) */
+@font-face { font-family: 'Georgia'; src: url('.../Georgia.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Georgia'; src: url('.../Georgia-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Georgia'; src: url('.../Georgia-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Georgia'; src: url('.../Georgia-BoldItalic.woff2') format('woff2'); font-weight: 700; font-style: italic; font-display: swap; }
+
+@font-face { font-family: 'Baloo Da 2'; src: url('.../BalooDa2-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Akkhor'; src: url('.../Akkhor.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+
+/* Defaults; will be overridden by variables from theme.liquid */
+:root{
+  --font-body: Arial, "Helvetica Neue", Helvetica, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-heading: 'Georgia', Georgia, 'Times New Roman', serif;
+  --font-accent: 'Baloo Da 2', Arial, sans-serif;
+
+  --p-size: 16px; --p-line: 1.6;
+  --h1-size: 40px; --h1-line: 1.2;
+  --h2-size: 32px; --h2-line: 1.3;
 }
 
-@font-face {
-    font-family: 'Georgia';
-    src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Georgia-Bold.woff2?v=1760150472') format('woff2'),
-        url('Georgia-Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
+/* Apply site-wide */
+body { font-family: var(--font-body); font-size: var(--p-size); line-height: var(--p-line); }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
+h1 { font-size: var(--h1-size); line-height: var(--h1-line); }
+h2 { font-size: var(--h2-size); line-height: var(--h2-line); }
 
-@font-face {
-    font-family: 'Georgia';
-    src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Georgia-BoldItalic.woff2?v=1760150472') format('woff2'),
-        url('Georgia-BoldItalic.woff') format('woff');
-    font-weight: 700;
-    font-style: italic;
-    font-display: swap;
-}
+/* Accents */
+.badge, .pill, .accent, .btn--accent { font-family: var(--font-accent); }
 
-@font-face {
-    font-family: 'Georgia';
-    src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Georgia.woff2?v=1760150472') format('woff2'),
-        url('Georgia.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Akkhor';
-    src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Akkhor.woff2?v=1760150070') format('woff2'),
-        url('Akkhor.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Baloo Da 2';
-    src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/BalooDa2-Regular.woff2?v=1760031828') format('woff2'),
-        url('BalooDa2-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-
-/* Global default — body text uses Arial */
-body {
-  font-family: Arial, "Helvetica Neue", Helvetica, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
-
-/* Headings site-wide (optional): use Georgia on headings everywhere */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Georgia', Georgia, "Times New Roman", serif;
-}
-
-/* Accents/badges/buttons that should use Baloo Da 2 */
-.badge, .pill, .fun-title, .price-tag--fun {
-  font-family: 'BalooDa2', Arial, sans-serif;
-}
-
-/* Bangla text: use Akkhor wherever you render bn content */
-:lang(bn), .bn-text {
-  font-family: 'Akkhor', 'Noto Serif Bengali', 'SolaimanLipi', serif;
-}
-
-/* Blog Article */
-.article-template {
-  font-family: 'Georgia', Georgia, "Times New Roman", serif;
-  line-height: 1.8;
-  color: #222;
-}
-
-.article-template h1 {
-  font-family: 'Georgia', Georgia, "Times New Roman", serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-.article-template h2 {
-  font-family: 'Georgia', Georgia, "Times New Roman", serif;
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-.article-template p {
-  font-family: 'Georgia', Georgia, "Times New Roman", serif;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  margin-bottom: 1rem;
-}
-
-/* Optional: if your blog has Bangla posts */
-.article-template:lang(bn),
-.article-template .bn-text {
-  font-family: 'Akkhor', 'Noto Serif Bengali', 'SolaimanLipi', serif;
-}
+/* Blog article helper (if content includes Bangla) */
+:lang(bn), .bn-text { font-family: 'Akkhor', 'Noto Serif Bengali', serif; }
