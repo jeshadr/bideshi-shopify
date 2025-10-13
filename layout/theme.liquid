@@ -14,7 +14,7 @@
     
     %}
 
-    {%- liquid
+{%- liquid
   # BODY font stack
   assign body_stack = "Arial, 'Helvetica Neue', Helvetica, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
   case settings.body_font_family
@@ -45,6 +45,23 @@
   assign h2_size  = settings.h2_size               | default: 32
   assign h2_line  = settings.h2_line_height        | default: 1.3
 -%}
+
+<style>
+  :root{
+    --font-body: {{ body_stack }};
+    --font-heading: {{ heading_stack }};
+    --font-accent: {{ accent_stack }};
+
+    --p-size: {{ p_size }}px;
+    --p-line: {{ p_line }};
+
+    --h1-size: {{ h1_size }}px;
+    --h1-line: {{ h1_line }};
+    --h2-size: {{ h2_size }}px;
+    --h2-line: {{ h2_line }};
+  }
+</style>
+
 
 <style>
   :root{
