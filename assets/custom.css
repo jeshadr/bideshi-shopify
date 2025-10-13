@@ -60,7 +60,7 @@ body {
 
 /* Headings site-wide (optional): use Georgia on headings everywhere */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'GeorgiaCustom', Georgia, "Times New Roman", serif;
+  font-family: 'Georgia', Georgia, "Times New Roman", serif;
 }
 
 /* Accents/badges/buttons that should use Baloo Da 2 */
