@@ -9,7 +9,7 @@
  */
 {
   "current": {
-    "bideshi_font": "baloo_da_2",
+    "bideshi_font": "merriweather",
     "logo": "shopify://shop_images/Bideshi_Logo.png",
     "logo_inverse": "shopify://shop_images/bideshi_white.png",
     "favicon": "shopify://shop_images/favicon-32x32.png",
