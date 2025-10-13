@@ -9,7 +9,7 @@
       "options": [
         { "value": "georgia", "label": "Georgia" },
         { "value": "baloo_da_2", "label": "Baloo Da 2" },
-        { "value": "akkhor", "label": "FN Akkhor" }
+        { "value": "akkhor", "label": "FNAkkhor" }
       ],
       "default": "georgia"
     }
