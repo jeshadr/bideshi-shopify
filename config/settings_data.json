@@ -9,12 +9,11 @@
  */
 {
   "current": {
-    "bideshi_font": "merriweather",
     "logo": "shopify://shop_images/Bideshi_Logo.png",
     "logo_inverse": "shopify://shop_images/bideshi_white.png",
     "favicon": "shopify://shop_images/favicon-32x32.png",
     "type_body_font": "arial_n4",
-    "type_subheading_font": "merriweather_n5",
+    "type_subheading_font": "arial_n4",
     "type_heading_font": "arial_n7",
     "type_accent_font": "inter_n7",
     "type_size_paragraph": "14",
@@ -79,6 +78,7 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 14,
     "variant_button_width": "equal-width-buttons",
+    "bideshi_font": "merriweather",
     "content_for_index": [],
     "blocks": {
       "4015264832934714879": {
