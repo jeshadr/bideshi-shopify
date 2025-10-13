@@ -1,5 +1,20 @@
 [
   {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "select",
+        "id": "bideshi_font",
+        "label": "Heading font",
+        "options": [
+        { "value": "baloo_da_2", "label": "Baloo Da 2" },
+        { "value": "georgia", "label": "georgia" },
+      ],
+        "default": "georgia"
+      }
+]
+  },
+  {
     "name": "theme_info",
     "theme_name": "Horizon",
     "theme_version": "2.0.3",
