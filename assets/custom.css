@@ -8,7 +8,7 @@
 @font-face { font-family: 'Georgia'; src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Georgia-BoldItalic.woff2?v=1760150472') format('woff2'); font-weight: 700; font-style: italic; font-display: swap; }
 
 @font-face { font-family: 'Baloo Da 2'; src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/BalooDa2-Regular.woff2?v=1760031828') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Akkhor'; src: url('.../Akkhor.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Akkhor'; src: url('https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Akkhor.woff2?v=1760150070') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 
 /* Defaults; will be overridden by variables from theme.liquid */
 :root{
