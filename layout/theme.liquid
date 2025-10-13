@@ -14,54 +14,6 @@
     
     %}
 
-{%- liquid
-  # BODY font stack
-  assign body_stack = "Arial, 'Helvetica Neue', Helvetica, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
-  case settings.body_font_family
-    when 'georgia'     then assign body_stack = "'Georgia', Georgia, 'Times New Roman', serif"
-    when 'baloo_da_2'  then assign body_stack = "'Baloo Da 2', Arial, sans-serif"
-    when 'akkhor'      then assign body_stack = "'Akkhor', 'Noto Serif Bengali', serif"
-  endcase
-
-  # HEADING font stack
-  assign heading_stack = "'Georgia', Georgia, 'Times New Roman', serif"
-  case settings.heading_font_family
-    when 'baloo_da_2' then assign heading_stack = "'Baloo Da 2', Arial, sans-serif"
-    when 'akkhor'     then assign heading_stack = "'Akkhor', 'Noto Serif Bengali', serif"
-  endcase
-
-  # ACCENT font stack
-  assign accent_stack = "'Baloo Da 2', Arial, sans-serif"
-  case settings.accent_font_family
-    when 'georgia'    then assign accent_stack = "'Georgia', Georgia, 'Times New Roman', serif"
-    when 'akkhor'     then assign accent_stack = "'Akkhor', 'Noto Serif Bengali', serif"
-  endcase
-
-  # Sizes / line heights
-  assign p_size   = settings.paragraph_size        | default: 16
-  assign p_line   = settings.paragraph_line_height | default: 1.6
-  assign h1_size  = settings.h1_size               | default: 40
-  assign h1_line  = settings.h1_line_height        | default: 1.2
-  assign h2_size  = settings.h2_size               | default: 32
-  assign h2_line  = settings.h2_line_height        | default: 1.3
--%}
-
-<style>
-  :root{
-    --font-body: {{ body_stack }};
-    --font-heading: {{ heading_stack }};
-    --font-accent: {{ accent_stack }};
-
-    --p-size: {{ p_size }}px;
-    --p-line: {{ p_line }};
-
-    --h1-size: {{ h1_size }}px;
-    --h1-line: {{ h1_line }};
-    --h2-size: {{ h2_size }}px;
-    --h2-line: {{ h2_line }};
-  }
-</style>
-
 
 <style>
   :root{
