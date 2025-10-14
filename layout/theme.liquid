@@ -15,7 +15,7 @@
     %} {% endcomment %}
 
 
-<style>
+{% comment %} <style>
   :root{
     --font-body: {{ body_stack }};
     --font-heading: {{ heading_stack }};
@@ -29,7 +29,7 @@
     --h2-size: {{ h2_size }}px;
     --h2-line: {{ h2_line }};
   }
-</style>
+</style> {% endcomment %}
 
   
     {%- if settings.favicon != blank -%}
