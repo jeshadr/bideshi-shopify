@@ -6,13 +6,13 @@
   <head>
     {%- render 'stylesheets' -%}
 
-    {%- liquid
+    {% comment %} {%- liquid
       render 'meta-tags'
 
 
       echo 'custom.css.liquid' | asset_url | stylesheet_tag: preload: true
     
-    %}
+    %} {% endcomment %}
 
 
 <style>
