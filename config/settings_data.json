@@ -82,37 +82,6 @@
     "sections": {
       "websensepro-custom-font": {
         "type": "websensepro-custom-font",
-        "blocks": {
-          "image_qKeJiE": {
-            "type": "image",
-            "settings": {
-              "name": "FN Akkhor",
-              "custom_font_weight": "none",
-              "custom_font_url": "https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Akkhor.woff2?v=1760150070",
-              "apply_h1": false,
-              "apply_h2": false,
-              "apply_h3": false,
-              "apply_h4": false,
-              "apply_h5": false,
-              "apply_h6": false,
-              "apply_span": true,
-              "apply_p": true,
-              "apply_a": true,
-              "apply_input": true,
-              "apply_label": true,
-              "apply_legend": true,
-              "apply_button": true,
-              "apply_summary": true,
-              "apply_select": true,
-              "apply_option": true,
-              "apply_small": true,
-              "apply_custom": ""
-            }
-          }
-        },
-        "block_order": [
-          "image_qKeJiE"
-        ],
         "settings": {
           "enable": true
         }
