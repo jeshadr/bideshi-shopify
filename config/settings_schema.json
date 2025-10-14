@@ -1,37 +1,5 @@
 [
   {
-  "name": "Global Typography",
-  "settings": [
-    {
-      "type": "select",
-      "id": "global_body_font",
-      "label": "Body font",
-      "options": [
-        { "value": "arial", "label": "Arial (default)" },
-        { "value": "georgia", "label": "Georgia" },
-        { "value": "baloo", "label": "Baloo Da 2" }
-      ],
-      "default": "arial"
-    },
-    {
-      "type": "select",
-      "id": "global_heading_font",
-      "label": "Heading font",
-      "options": [
-        { "value": "georgia", "label": "Georgia (classic)" },
-        { "value": "baloo", "label": "Baloo Da 2 (playful)" },
-        { "value": "arial", "label": "Arial (neutral)" }
-      ],
-      "default": "georgia"
-    },
-    { "type": "range", "id": "global_body_size", "min": 14, "max": 20, "step": 1, "unit": "px", "label": "Body font size", "default": 16 },
-    { "type": "range", "id": "global_body_lineheight", "min": 1.4, "max": 2.0, "step": 0.1, "label": "Body line-height", "default": 1.7},
-    { "type": "range", "id": "global_body_letterspace", "min": -0.1, "max": 0.1, "step": 0.1, "unit": "em", "label": "Body letter-spacing", "default": 0.0 },
-    { "type": "range", "id": "global_heading_weight", "min": 400, "max": 900, "step": 100, "label": "Heading weight", "default": 700 },
-    { "type": "range", "id": "global_heading_lineheight", "min": 1.1, "max": 1.5, "step": 0.1, "label": "Heading line-height", "default": 1.3 }
-  ]
-},
-  {
     "name": "theme_info",
     "theme_name": "Horizon",
     "theme_version": "2.0.3",
