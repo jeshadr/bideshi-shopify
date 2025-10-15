@@ -106,7 +106,7 @@
               "apply_select": false,
               "apply_option": false,
               "apply_small": false,
-              "apply_custom": "H1 {\n font-size: 70px\n}\n\n.price"
+              "apply_custom": "H1 {\n font-size: 70px;\n line-height: 91px;\n}\n\n.price"
             }
           },
           "image_yQqLYC": {
