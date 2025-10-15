@@ -95,7 +95,7 @@
               "apply_h4": true,
               "apply_h5": true,
               "apply_h6": true,
-              "apply_span": true,
+              "apply_span": false,
               "apply_p": true,
               "apply_a": false,
               "apply_input": false,
@@ -195,7 +195,7 @@
           "image_R8BtYW"
         ],
         "custom_css": [
-          "h1 {line-height: 91px; letter-spacing: -5.5px}"
+          "h1 {line-height: 91px; letter-spacing: -5.5px;}"
         ],
         "settings": {
           "enable": true
