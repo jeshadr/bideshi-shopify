@@ -1,0 +1,26 @@
+{%- doc -%}
+  Block for the sizing widget link that appears on product pages.
+  This block renders the "Check my size" clickable text link below the size selector.
+{%- enddoc -%}
+
+{% render 'sizing-widget-button' %}
+
+{% schema %}
+{
+  "name": "Sizing Widget Link",
+  "tag": "section",
+  "class": "sizing-widget-block",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "This clickable link opens the sizing widget modal to help customers find their perfect size."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sizing Widget Link",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

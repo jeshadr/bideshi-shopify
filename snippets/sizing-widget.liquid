@@ -1,0 +1,606 @@
+{%- doc -%}
+  Renders the sizing widget modal that helps users find their correct size.
+  This widget collects user height, weight, age, and body type to recommend a size.
+{%- enddoc -%}
+
+<div id="sizing-widget-modal" class="sizing-widget-modal" style="display: none;">
+  <div class="sizing-widget-modal__overlay" onclick="closeSizingWidget()"></div>
+  <div class="sizing-widget-modal__content">
+    <button class="sizing-widget-modal__close" onclick="closeSizingWidget()" aria-label="Close sizing widget">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="sizing-widget-modal__header">
+      <h2>What is my size?</h2>
+      <p>Enter your details below to get your perfect size recommendation</p>
+    </div>
+
+    <form id="sizing-widget-form" class="sizing-widget-form">
+      <div class="sizing-widget-steps-container">
+      <!-- Step 1: Physical Measurements -->
+      <div id="step-1" class="sizing-widget-step sizing-widget-step--active">
+        <h3>Physical Measurements</h3>
+        
+        <!-- Units Toggle -->
+        <div class="sizing-widget-units">
+          <label class="sizing-widget-units__toggle">
+            <input type="radio" name="units" value="imperial" checked>
+            <span>Imperial (ft/in, lbs)</span>
+          </label>
+          <label class="sizing-widget-units__toggle">
+            <input type="radio" name="units" value="metric">
+            <span>Metric (cm, kg)</span>
+          </label>
+        </div>
+
+        <!-- Height Input -->
+        <div class="sizing-widget-field">
+          <label for="height">Height</label>
+          <div id="height-input-container" class="sizing-widget-height-input">
+            <input type="number" id="height-feet" name="height-feet" placeholder="5" min="3" max="8" required>
+            <span>ft</span>
+            <input type="number" id="height-inches" name="height-inches" placeholder="10" min="0" max="11" required>
+            <span>in</span>
+          </div>
+        </div>
+
+        <!-- Weight Input -->
+        <div class="sizing-widget-field">
+          <label for="weight">Weight</label>
+          <div class="sizing-widget-weight-input">
+            <input type="number" id="weight" name="weight" placeholder="150" min="50" max="500" required>
+            <span id="weight-unit">lbs</span>
+          </div>
+        </div>
+
+        <!-- Age Input -->
+        <div class="sizing-widget-field">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" placeholder="25" min="13" max="100" required>
+        </div>
+
+        <button type="button" class="sizing-widget-button sizing-widget-button--primary" onclick="nextStep()">
+          Next
+        </button>
+      </div>
+
+      <!-- Step 2: Body Type -->
+      <div id="step-2" class="sizing-widget-step">
+        <h3>How does your body look?</h3>
+        <p>Choose the option that best describes your body type:</p>
+        
+        <div class="sizing-widget-body-types">
+          <label class="sizing-widget-body-type">
+            <input type="radio" name="body-type" value="slim" required>
+            <div class="sizing-widget-body-type__image">
+              <img src="{{ 'body-type-slim.png' | asset_url }}" alt="Slim body type" class="sizing-widget-body-image">
+            </div>
+            <span class="sizing-widget-body-type__label">Slim</span>
+          </label>
+
+          <label class="sizing-widget-body-type">
+            <input type="radio" name="body-type" value="athletic" required>
+            <div class="sizing-widget-body-type__image">
+              <img src="{{ 'body-type-athletic.png' | asset_url }}" alt="Athletic body type" class="sizing-widget-body-image">
+            </div>
+            <span class="sizing-widget-body-type__label">Athletic</span>
+          </label>
+
+          <label class="sizing-widget-body-type">
+            <input type="radio" name="body-type" value="rounder" required>
+            <div class="sizing-widget-body-type__image">
+              <img src="{{ 'body-type-rounder.png' | asset_url }}" alt="Rounder body type" class="sizing-widget-body-image">
+            </div>
+            <span class="sizing-widget-body-type__label">Rounder</span>
+          </label>
+        </div>
+
+        <div class="sizing-widget-navigation">
+          <button type="button" class="sizing-widget-button sizing-widget-button--secondary" onclick="prevStep()">
+            Back
+          </button>
+          <button type="button" class="sizing-widget-button sizing-widget-button--primary" onclick="getSizeRecommendation()">
+            Get My Size
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Results -->
+      <div id="step-3" class="sizing-widget-step">
+        <h3>Your Recommended Size</h3>
+        
+        <div id="size-recommendation" class="sizing-widget-result">
+          <div class="sizing-widget-result__size">
+            <span id="recommended-size">M</span>
+          </div>
+          <p>Based on your measurements, we recommend size <strong id="recommended-size-text">M</strong></p>
+        </div>
+
+        <div class="sizing-widget-navigation">
+          <button type="button" class="sizing-widget-button sizing-widget-button--secondary" onclick="prevStep()">
+            Back
+          </button>
+          <button type="button" class="sizing-widget-button sizing-widget-button--primary" onclick="applySizeRecommendation()">
+            Apply This Size
+          </button>
+        </div>
+      </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% stylesheet %}
+  .sizing-widget-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .sizing-widget-modal.show {
+    opacity: 1;
+  }
+
+  .sizing-widget-modal__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+
+  .sizing-widget-modal__content {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.9);
+    transition: transform 0.3s ease, height 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .sizing-widget-modal.show .sizing-widget-modal__content {
+    transform: scale(1);
+  }
+
+  .sizing-widget-modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .sizing-widget-modal__close:hover {
+    background-color: #f5f5f5;
+  }
+
+  .sizing-widget-modal__header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .sizing-widget-modal__header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  .sizing-widget-modal__header p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .sizing-widget-steps-container {
+    position: relative;
+    overflow: hidden;
+    transition: height 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .sizing-widget-step {
+    display: block;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+
+  .sizing-widget-step--active {
+    opacity: 1;
+    position: relative;
+    pointer-events: auto;
+  }
+
+  /* Slide animations for next/forward direction */
+  .sizing-widget-step--slide-out-left {
+    animation: slideOutLeft 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  }
+
+  .sizing-widget-step--slide-in-right {
+    animation: slideInRight 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  }
+
+  /* Slide animations for back/previous direction */
+  .sizing-widget-step--slide-out-right {
+    animation: slideOutRight 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  }
+
+  .sizing-widget-step--slide-in-left {
+    animation: slideInLeft 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  }
+
+  @keyframes slideOutLeft {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .sizing-widget-step h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    color: #333;
+  }
+
+  .sizing-widget-units {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+  }
+
+  .sizing-widget-units__toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .sizing-widget-units__toggle input {
+    margin-right: 0.5rem;
+  }
+
+  .sizing-widget-field {
+    margin-bottom: 1.5rem;
+  }
+
+  .sizing-widget-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .sizing-widget-height-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sizing-widget-height-input input {
+    width: 80px;
+  }
+
+  .sizing-widget-weight-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sizing-widget-weight-input input {
+    width: 120px;
+  }
+
+  .sizing-widget-field input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .sizing-widget-field input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+
+  /* Make placeholder text more transparent */
+  .sizing-widget-field input::placeholder {
+    color: rgba(0, 0, 0, 0.3);
+    opacity: 1;
+  }
+
+  .sizing-widget-field input::-webkit-input-placeholder {
+    color: rgba(0, 0, 0, 0.3);
+    opacity: 1;
+  }
+
+  .sizing-widget-field input::-moz-placeholder {
+    color: rgba(0, 0, 0, 0.3);
+    opacity: 1;
+  }
+
+  .sizing-widget-field input:-ms-input-placeholder {
+    color: rgba(0, 0, 0, 0.3);
+    opacity: 1;
+  }
+
+  .sizing-widget-field input:-moz-placeholder {
+    color: rgba(0, 0, 0, 0.3);
+    opacity: 1;
+  }
+
+  .sizing-widget-body-types {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .sizing-widget-body-type {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 1.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .sizing-widget-body-type:hover {
+    border-color: #007bff;
+    background-color: #f8f9fa;
+  }
+
+  .sizing-widget-body-type:has(input:checked):hover {
+    border-color: #0056b3;
+  }
+
+
+  .sizing-widget-body-type input {
+    display: none;
+  }
+
+
+  .sizing-widget-body-type:has(input:checked) {
+    border-color: #007bff;
+    background-color: #f8f9fa;
+  }
+
+  .sizing-widget-body-type input:checked ~ .sizing-widget-body-type__label {
+    color: #007bff;
+    font-weight: 600;
+  }
+
+  .sizing-widget-body-type__image {
+    width: 100%;
+    max-width: 200px;
+    height: 170px;
+    border: 2px solid #e9ecef !important;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    transition: none !important;
+    overflow: hidden;
+    background-color: #f8f9fa;
+  }
+
+  .sizing-widget-body-type__image:hover {
+    border-color: #e9ecef !important;
+    background-color: #f8f9fa !important;
+  }
+
+  .sizing-widget-body-type:hover .sizing-widget-body-type__image {
+    border-color: #e9ecef !important;
+    background-color: #f8f9fa !important;
+  }
+
+  .sizing-widget-body-type:has(input:checked) .sizing-widget-body-type__image,
+  .sizing-widget-body-type:has(input:checked):hover .sizing-widget-body-type__image {
+    border-color: #e9ecef !important;
+    background-color: #f8f9fa !important;
+  }
+
+  .sizing-widget-body-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 6px;
+  }
+
+  .sizing-widget-body-type__label {
+    font-size: 1rem;
+    color: #333;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .sizing-widget-navigation {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+  }
+
+  .sizing-widget-button {
+    padding: 0.875rem 1.75rem;
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    flex: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .sizing-widget-button--primary {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .sizing-widget-button--primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  }
+
+  .sizing-widget-button--primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .sizing-widget-button--secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .sizing-widget-button--secondary:hover {
+    background-color: #545b62;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+  }
+
+  .sizing-widget-button--secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .sizing-widget-result {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .sizing-widget-result__size {
+    width: 100px;
+    height: 100px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 auto 1rem auto;
+  }
+
+  @media (max-width: 768px) {
+    .sizing-widget-modal__content {
+      width: 95%;
+      padding: 1rem;
+      max-height: 95vh;
+    }
+
+    .sizing-widget-modal__header {
+      margin-bottom: 1rem;
+    }
+
+    .sizing-widget-body-types {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .sizing-widget-body-type__image {
+      width: 100%;
+      max-width: 240px;
+      height: 200px;
+      margin: 0 auto 0.75rem auto;
+    }
+
+    .sizing-widget-navigation {
+      flex-direction: column;
+      margin-top: auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .sizing-widget-modal__content {
+      width: 98%;
+      padding: 0.75rem;
+      max-height: 98vh;
+    }
+
+    .sizing-widget-body-type__image {
+      max-width: 220px;
+      height: 180px;
+    }
+
+    .sizing-widget-modal__header h2 {
+      font-size: 1.25rem;
+    }
+
+    .sizing-widget-step h3 {
+      font-size: 1.1rem;
+    }
+  }
+{% endstylesheet %}

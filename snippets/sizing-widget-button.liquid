@@ -1,0 +1,145 @@
+{%- doc -%}
+  Renders the "Check my size" clickable text link that opens the sizing widget modal.
+  This link will be positioned inline with the "Size" text, right-aligned.
+{%- enddoc -%}
+
+<script>
+  function addSizingWidgetButton() {
+    const variantPicker = document.querySelector('variant-picker');
+    if (variantPicker) {
+      const legend = variantPicker.querySelector('legend');
+      if (legend && !legend.querySelector('.sizing-widget-inline')) {
+        // Create the sizing widget link
+        const sizingLink = document.createElement('a');
+        sizingLink.href = '#';
+        sizingLink.className = 'sizing-widget-inline';
+        sizingLink.innerHTML = '<span class="sizing-widget-link__icon">📏</span><span class="sizing-widget-link__text">Check my size</span>';
+        sizingLink.onclick = function(e) {
+          e.preventDefault();
+          openSizingWidget();
+          return false;
+        };
+        sizingLink.setAttribute('aria-label', 'Find your perfect size');
+        
+        // Make the legend a flex container with space-between
+        legend.style.display = 'flex';
+        legend.style.justifyContent = 'space-between';
+        legend.style.alignItems = 'center';
+        legend.style.width = '100%';
+        
+        // Append the sizing link to the legend
+        legend.appendChild(sizingLink);
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Wait for the variant picker to load, then inject our sizing widget link
+    setTimeout(addSizingWidgetButton, 100);
+  });
+
+  // Re-add the button after variant picker updates (when variant changes)
+  document.addEventListener('variant:update', function() {
+    // Add immediately and also with a small delay as backup
+    addSizingWidgetButton();
+    setTimeout(addSizingWidgetButton, 50);
+  });
+
+  // Also listen for variant selected events
+  document.addEventListener('variant:selected', function() {
+    addSizingWidgetButton();
+    setTimeout(addSizingWidgetButton, 50);
+  });
+
+  // Use MutationObserver to watch for variant picker changes
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.type === 'childList') {
+        // Check if variant picker was added or modified
+        mutation.addedNodes.forEach(function(node) {
+          if (node.nodeType === 1) { // Element node
+            if (node.tagName === 'VARIANT-PICKER' || node.querySelector('variant-picker')) {
+              addSizingWidgetButton();
+              setTimeout(addSizingWidgetButton, 50);
+            }
+          }
+        });
+        
+        // Also check if the legend was modified
+        mutation.addedNodes.forEach(function(node) {
+          if (node.nodeType === 1) { // Element node
+            if (node.tagName === 'LEGEND' && node.closest('variant-picker')) {
+              addSizingWidgetButton();
+              setTimeout(addSizingWidgetButton, 50);
+            }
+          }
+        });
+      }
+    });
+  });
+
+  // Start observing
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Also add a periodic check as a fallback
+  setInterval(addSizingWidgetButton, 1000);
+</script>
+
+{% stylesheet %}
+  .sizing-widget-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    margin-left: auto;
+  }
+
+  .sizing-widget-inline:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+
+  .sizing-widget-inline:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .sizing-widget-inline .sizing-widget-link__icon {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .sizing-widget-inline .sizing-widget-link__text {
+    font-weight: 500;
+  }
+
+  /* Ensure the variant picker legend can accommodate both elements */
+  variant-picker legend {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  @media (max-width: 768px) {
+    .sizing-widget-inline {
+      font-size: 0.85rem;
+    }
+    
+    .sizing-widget-inline .sizing-widget-link__text {
+      display: none;
+    }
+    
+    .sizing-widget-inline .sizing-widget-link__icon {
+      font-size: 1.1rem;
+    }
+  }
+{% endstylesheet %}

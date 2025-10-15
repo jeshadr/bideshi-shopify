@@ -66,5 +66,10 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
+
+    {% if template contains 'product' %}
+      {% render 'sizing-widget' %}
+      <script src="{{ 'sizing-widget.js' | asset_url }}" defer></script>
+    {% endif %}
   </body>
 </html>
