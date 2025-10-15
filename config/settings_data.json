@@ -123,7 +123,7 @@
               "apply_h6": false,
               "apply_span": true,
               "apply_p": true,
-              "apply_a": false,
+              "apply_a": true,
               "apply_input": false,
               "apply_label": false,
               "apply_legend": false,
@@ -132,7 +132,7 @@
               "apply_select": false,
               "apply_option": false,
               "apply_small": false,
-              "apply_custom": ".blog-post-content"
+              "apply_custom": ".blog-post-card__content"
             }
           },
           "image_enVHQc": {
