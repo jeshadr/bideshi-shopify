@@ -132,7 +132,7 @@
               "apply_select": false,
               "apply_option": false,
               "apply_small": false,
-              "apply_custom": ".blog-post-card__content .text-block"
+              "apply_custom": ".blog-post-card__content\n.text-block {\n  font-family: Georgia, \"Times New Roman\", serif !important;\n  font-weight: 700 !important;\n  font-size: 32.4px !important;     /* Match your H4 sample */\n  line-height: 42.12px !important;  /* Match your H4 sample */\n  letter-spacing: -0.09em !important; /* Match your H4 sample */\n}"
             }
           },
           "image_enVHQc": {
