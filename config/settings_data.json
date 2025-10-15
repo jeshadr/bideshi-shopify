@@ -83,7 +83,7 @@
       "websensepro-custom-font": {
         "type": "websensepro-custom-font",
         "blocks": {
-          "image_8NxNmP": {
+          "image_4WLHhK": {
             "type": "image",
             "settings": {
               "name": "Arial",
@@ -91,10 +91,10 @@
               "custom_font_url": "https://cdn.shopify.com/s/files/1/0714/9659/7540/files/ArialMT.woff2?v=1760494779",
               "apply_h1": true,
               "apply_h2": true,
-              "apply_h3": false,
-              "apply_h4": false,
-              "apply_h5": false,
-              "apply_h6": false,
+              "apply_h3": true,
+              "apply_h4": true,
+              "apply_h5": true,
+              "apply_h6": true,
               "apply_span": true,
               "apply_p": true,
               "apply_a": false,
@@ -122,33 +122,7 @@
               "apply_h5": false,
               "apply_h6": false,
               "apply_span": true,
-              "apply_p": false,
-              "apply_a": true,
-              "apply_input": false,
-              "apply_label": false,
-              "apply_legend": false,
-              "apply_button": false,
-              "apply_summary": false,
-              "apply_select": false,
-              "apply_option": false,
-              "apply_small": false,
-              "apply_custom": ".blog-post-card__content-text"
-            }
-          },
-          "image_R8BtYW": {
-            "type": "image",
-            "settings": {
-              "name": "Baloo Da 2",
-              "custom_font_weight": "none",
-              "custom_font_url": "https://cdn.shopify.com/s/files/1/0714/9659/7540/files/BalooDa2-Regular.woff2?v=1760031828",
-              "apply_h1": false,
-              "apply_h2": false,
-              "apply_h3": false,
-              "apply_h4": false,
-              "apply_h5": false,
-              "apply_h6": false,
-              "apply_span": false,
-              "apply_p": false,
+              "apply_p": true,
               "apply_a": false,
               "apply_input": false,
               "apply_label": false,
@@ -158,7 +132,7 @@
               "apply_select": false,
               "apply_option": false,
               "apply_small": false,
-              "apply_custom": ""
+              "apply_custom": ".blog-post-content"
             }
           },
           "image_enVHQc": {
@@ -186,13 +160,39 @@
               "apply_small": false,
               "apply_custom": ""
             }
+          },
+          "image_R8BtYW": {
+            "type": "image",
+            "settings": {
+              "name": "Baloo Da 2",
+              "custom_font_weight": "none",
+              "custom_font_url": "https://cdn.shopify.com/s/files/1/0714/9659/7540/files/BalooDa2-Regular.woff2?v=1760031828",
+              "apply_h1": false,
+              "apply_h2": false,
+              "apply_h3": false,
+              "apply_h4": false,
+              "apply_h5": false,
+              "apply_h6": false,
+              "apply_span": false,
+              "apply_p": false,
+              "apply_a": false,
+              "apply_input": false,
+              "apply_label": false,
+              "apply_legend": false,
+              "apply_button": false,
+              "apply_summary": false,
+              "apply_select": false,
+              "apply_option": false,
+              "apply_small": false,
+              "apply_custom": ""
+            }
           }
         },
         "block_order": [
-          "image_8NxNmP",
+          "image_4WLHhK",
           "image_yQqLYC",
-          "image_R8BtYW",
-          "image_enVHQc"
+          "image_enVHQc",
+          "image_R8BtYW"
         ],
         "settings": {
           "enable": true
