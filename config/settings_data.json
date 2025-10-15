@@ -194,6 +194,9 @@
           "image_enVHQc",
           "image_R8BtYW"
         ],
+        "custom_css": [
+          "h1 {line-height: 91px; letter-spacing: -5.5px}"
+        ],
         "settings": {
           "enable": true
         }
