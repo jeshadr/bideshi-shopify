@@ -96,7 +96,7 @@
               "apply_h5": true,
               "apply_h6": true,
               "apply_span": true,
-              "apply_p": false,
+              "apply_p": true,
               "apply_a": false,
               "apply_input": false,
               "apply_label": false,
