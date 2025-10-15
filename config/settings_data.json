@@ -83,6 +83,32 @@
       "websensepro-custom-font": {
         "type": "websensepro-custom-font",
         "blocks": {
+          "image_8NxNmP": {
+            "type": "image",
+            "settings": {
+              "name": "Arial",
+              "custom_font_weight": "none",
+              "custom_font_url": "https://cdn.shopify.com/s/files/1/0714/9659/7540/files/ArialMT.woff2?v=1760494779",
+              "apply_h1": true,
+              "apply_h2": true,
+              "apply_h3": true,
+              "apply_h4": true,
+              "apply_h5": true,
+              "apply_h6": true,
+              "apply_span": true,
+              "apply_p": true,
+              "apply_a": false,
+              "apply_input": false,
+              "apply_label": false,
+              "apply_legend": false,
+              "apply_button": false,
+              "apply_summary": false,
+              "apply_select": false,
+              "apply_option": false,
+              "apply_small": false,
+              "apply_custom": ""
+            }
+          },
           "image_enVHQc": {
             "type": "image",
             "settings": {
@@ -163,6 +189,7 @@
           }
         },
         "block_order": [
+          "image_8NxNmP",
           "image_enVHQc",
           "image_R8BtYW",
           "image_yQqLYC"
