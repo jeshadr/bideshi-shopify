@@ -1,0 +1,41 @@
+<style>
+  .inline-media {
+    margin: 2rem 0;
+    width: 100%;
+  }
+
+  .inline-media img,
+  .inline-media video {
+    width: 100%;
+    height: auto;
+    border-radius: var(--style-border-radius-lg, 8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .inline-media audio {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .inline-media--embed iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--style-border-radius-lg, 8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .inline-media figcaption {
+    font-size: 0.875rem;
+    color: rgb(var(--color-foreground-rgb) / 0.6);
+    margin-top: 0.5rem;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* Responsive adjustments */
+  @media screen and (max-width: 749px) {
+    .inline-media {
+      margin: 1.5rem 0;
+    }
+  }
+</style>

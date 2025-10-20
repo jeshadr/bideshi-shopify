@@ -1,5 +1,5 @@
 
-
+{% render 'inline-media-styles' %}
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div class="section color-{{ section.settings.color_scheme }}">
   <div
@@ -24,104 +24,6 @@
       {%- content_for 'block', id: 'blog-post-image', type: '_blog-post-featured-image', image: article.image %}
     {%- endif -%}
     {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' %}
-
-<!-- ============================= -->
-<!-- Bideshi Custom Multimedia Layer -->
-<!-- ============================= -->
-
-<style>
-  .article-media {
-    margin: 2.5rem 0;
-    display: grid;
-    gap: 1.75rem;
-  }
-  .article-media img,
-  .article-media video,
-  .article-media iframe {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
-  .article-media audio {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-  .article-media iframe {
-    aspect-ratio: 16 / 9;
-  }
-  .article-media figcaption {
-    font-size: 0.875rem;
-    color: rgba(0,0,0,0.6);
-    margin-top: 0.4rem;
-    text-align: center;
-  }
-</style>
-
-<div class="article-media">
-
-  <!-- Images -->
-  {% assign media_images = article.metafields.custom.media_image.value %}
-  {% if media_images %}
-    {% for image in media_images %}
-      <figure>
-        <img
-          src="{{ image | image_url: width: 1200 }}"
-          alt="{{ article.title }}"
-          loading="lazy"
-        >
-      </figure>
-    {% endfor %}
-  {% endif %}
-
-  <!-- Audio -->
-  {% assign media_audios = article.metafields.custom.media_audio.value %}
-  {% if media_audios %}
-    {% for audio in media_audios %}
-      <figure>
-        <audio controls preload="none">
-          <source src="{{ audio.url }}" type="{{ audio.mime_type | default: 'audio/mpeg' }}">
-          Your browser does not support the audio element.
-        </audio>
-      </figure>
-    {% endfor %}
-  {% endif %}
-
-  <!-- Uploaded Video Files -->
-  {% assign media_videos = article.metafields.custom.media_video.value %}
-  {% if media_videos %}
-    {% for video in media_videos %}
-      <figure>
-        {{ video | video_tag: controls: true, preload: "metadata" }}
-      </figure>
-    {% endfor %}
-  {% endif %}
-
-  <!-- External Video Links (YouTube/Vimeo) -->
-  {% assign media_video_links = article.metafields.custom.media_video_link.value %}
-  {% if media_video_links %}
-    {% for link in media_video_links %}
-      {% assign embed_link = link
-        | replace: "watch?v=", "embed/"
-        | replace: "youtu.be/", "youtube.com/embed/"
-        | replace: "&list", "?list"
-      %}
-      <figure>
-        <iframe
-          src="{{ embed_link | escape }}"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
-      </figure>
-    {% endfor %}
-  {% endif %}
-
-</div>
-
-<!-- ============================= -->
-<!-- End Bideshi Custom Multimedia Layer -->
-<!-- ============================= -->
     
     {% if blog.comments_enabled? %}
       <div class="blog-post-comments-container">
