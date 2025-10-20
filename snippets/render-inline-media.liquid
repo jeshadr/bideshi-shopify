@@ -1,0 +1,108 @@
+{%- comment -%}
+  Renders inline media based on shortcodes in article content
+  Usage: {% render 'render-inline-media', content: article.content, article: article %}
+{%- endcomment -%}
+
+{%- liquid
+  assign processed_content = content
+  
+  # Get all media from metafields
+  assign media_images = article.metafields.custom.media_image.value
+  assign media_audios = article.metafields.custom.media_audio.value
+  assign media_videos = article.metafields.custom.media_video.value
+  assign media_video_links = article.metafields.custom.media_video_link.value
+-%}
+
+{%- comment -%} Process Images {%- endcomment -%}
+{%- if media_images -%}
+  {%- for image in media_images -%}
+    {%- assign index = forloop.index -%}
+    {%- assign shortcode = '[media-image-' | append: index | append: ']' -%}
+    
+    {%- capture image_html -%}
+      <figure class="inline-media inline-media--image">
+        <img
+          src="{{ image | image_url: width: 1200 }}"
+          srcset="
+            {{ image | image_url: width: 400 }} 400w,
+            {{ image | image_url: width: 800 }} 800w,
+            {{ image | image_url: width: 1200 }} 1200w,
+            {{ image | image_url: width: 1600 }} 1600w
+          "
+          sizes="(min-width: 750px) calc(100vw - 10rem), calc(100vw - 3rem)"
+          alt="{{ image.alt | default: article.title }}"
+          loading="lazy"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+        >
+      </figure>
+    {%- endcapture -%}
+    
+    {%- assign processed_content = processed_content | replace: shortcode, image_html -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%} Process Audio {%- endcomment -%}
+{%- if media_audios -%}
+  {%- for audio in media_audios -%}
+    {%- assign index = forloop.index -%}
+    {%- assign shortcode = '[media-audio-' | append: index | append: ']' -%}
+    
+    {%- capture audio_html -%}
+      <figure class="inline-media inline-media--audio">
+        <audio controls preload="metadata">
+          <source src="{{ audio.url }}" type="{{ audio.mime_type | default: 'audio/mpeg' }}">
+          Your browser does not support the audio element.
+        </audio>
+      </figure>
+    {%- endcapture -%}
+    
+    {%- assign processed_content = processed_content | replace: shortcode, audio_html -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%} Process Uploaded Videos {%- endcomment -%}
+{%- if media_videos -%}
+  {%- for video in media_videos -%}
+    {%- assign index = forloop.index -%}
+    {%- assign shortcode = '[media-video-' | append: index | append: ']' -%}
+    
+    {%- capture video_html -%}
+      <figure class="inline-media inline-media--video">
+        {{ video | video_tag: controls: true, preload: "metadata" }}
+      </figure>
+    {%- endcapture -%}
+    
+    {%- assign processed_content = processed_content | replace: shortcode, video_html -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%} Process Video Links (YouTube/Vimeo) {%- endcomment -%}
+{%- if media_video_links -%}
+  {%- for link in media_video_links -%}
+    {%- assign index = forloop.index -%}
+    {%- assign shortcode = '[media-link-' | append: index | append: ']' -%}
+    
+    {%- assign embed_link = link
+      | replace: "watch?v=", "embed/"
+      | replace: "youtu.be/", "youtube.com/embed/"
+      | replace: "&list", "?list"
+    -%}
+    
+    {%- capture link_html -%}
+      <figure class="inline-media inline-media--embed">
+        <iframe
+          src="{{ embed_link | escape }}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      </figure>
+    {%- endcapture -%}
+    
+    {%- assign processed_content = processed_content | replace: shortcode, link_html -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{{ processed_content }}

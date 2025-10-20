@@ -3,6 +3,8 @@
 <div class="blog-post-content rte">
   <rte-formatter>
     {{ article.content }}
+    <!-- Inline Media Shortcodes -->
+    {% render 'render-inline-media', content: article.content, article: article %}
   </rte-formatter>
 </div>
 
