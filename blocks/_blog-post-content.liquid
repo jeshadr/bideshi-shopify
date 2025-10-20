@@ -2,7 +2,7 @@
 
 <div class="blog-post-content rte">
   <rte-formatter>
-    <!-- Inline Media Shortcodes -->
+    <!--{{ article.content}} replacing this with Inline Media Shortcodes so that article doesn't render twice-->
     {% render 'render-inline-media', content: article.content, article: article %}
   </rte-formatter>
 </div>
