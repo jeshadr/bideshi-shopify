@@ -4,6 +4,7 @@
 {%- endcomment -%}
 
 {%- liquid
+  # Start with the original content
   assign processed_content = content
   
   # Get all media from metafields
@@ -16,8 +17,10 @@
 {%- comment -%} Process Images {%- endcomment -%}
 {%- if media_images -%}
   {%- for image in media_images -%}
-    {%- assign index = forloop.index -%}
-    {%- assign shortcode = '[media-image-' | append: index | append: ']' -%}
+    {%- liquid
+      assign index = forloop.index
+      assign shortcode = '[media-image-' | append: index | append: ']'
+    -%}
     
     {%- capture image_html -%}
       <figure class="inline-media inline-media--image">
@@ -45,8 +48,10 @@
 {%- comment -%} Process Audio {%- endcomment -%}
 {%- if media_audios -%}
   {%- for audio in media_audios -%}
-    {%- assign index = forloop.index -%}
-    {%- assign shortcode = '[media-audio-' | append: index | append: ']' -%}
+    {%- liquid
+      assign index = forloop.index
+      assign shortcode = '[media-audio-' | append: index | append: ']'
+    -%}
     
     {%- capture audio_html -%}
       <figure class="inline-media inline-media--audio">
@@ -64,8 +69,10 @@
 {%- comment -%} Process Uploaded Videos {%- endcomment -%}
 {%- if media_videos -%}
   {%- for video in media_videos -%}
-    {%- assign index = forloop.index -%}
-    {%- assign shortcode = '[media-video-' | append: index | append: ']' -%}
+    {%- liquid
+      assign index = forloop.index
+      assign shortcode = '[media-video-' | append: index | append: ']'
+    -%}
     
     {%- capture video_html -%}
       <figure class="inline-media inline-media--video">
@@ -80,19 +87,18 @@
 {%- comment -%} Process Video Links (YouTube/Vimeo) {%- endcomment -%}
 {%- if media_video_links -%}
   {%- for link in media_video_links -%}
-    {%- assign index = forloop.index -%}
-    {%- assign shortcode = '[media-link-' | append: index | append: ']' -%}
-    
-    {%- assign embed_link = link
-      | replace: "watch?v=", "embed/"
-      | replace: "youtu.be/", "youtube.com/embed/"
-      | replace: "&list", "?list"
+    {%- liquid
+      assign index = forloop.index
+      assign shortcode = '[media-link-' | append: index | append: ']'
+      
+      # Convert YouTube/Vimeo URLs to embed format
+      assign embed_link = link | replace: 'watch?v=', 'embed/' | replace: 'youtu.be/', 'youtube.com/embed/' | replace: '&list', '?list'
     -%}
     
     {%- capture link_html -%}
       <figure class="inline-media inline-media--embed">
         <iframe
-          src="{{ embed_link | escape }}"
+          src="{{ embed_link }}"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
@@ -105,4 +111,5 @@
   {%- endfor -%}
 {%- endif -%}
 
+{%- comment -%} Output the processed content {%- endcomment -%}
 {{ processed_content }}
