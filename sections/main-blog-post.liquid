@@ -1,9 +1,5 @@
 
-<<<<<<< HEAD
-
-=======
 {% render 'inline-media-styles' %} {%- comment -%} Render inline media styles for multimedia embeddings {%- endcomment -%}
->>>>>>> master
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div class="section color-{{ section.settings.color_scheme }}">
   <div
@@ -28,11 +24,7 @@
       {%- content_for 'block', id: 'blog-post-image', type: '_blog-post-featured-image', image: article.image %}
     {%- endif -%}
     {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' %}
-<<<<<<< HEAD
-
-=======
     
->>>>>>> master
     {% if blog.comments_enabled? %}
       <div class="blog-post-comments-container">
         <h2 class="h3">{{- 'blogs.article.comments_heading' | t: count: article.comments_count -}}</h2>
@@ -64,10 +56,6 @@
   </div>
 </div>
 
-<<<<<<< HEAD
-<script src="{{ 'shortcode-media.js' | asset_url }}" defer></script>
-=======
->>>>>>> master
 <script type="application/ld+json">
   {{ article | structured_data }}
 </script>
