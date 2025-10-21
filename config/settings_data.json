@@ -132,15 +132,15 @@
               "apply_select": false,
               "apply_option": false,
               "apply_small": false,
-              "apply_custom": ".blog-post-card__content\n.text-block {\n  font-family: ZT_Formom, \"Times New Roman\", serif !important;\n  font-weight: 400 !important;\n  font-size: 20px !important;     /* Match your H4 sample */\n  line-height: 42.12px !important;  /* Match your H4 sample */\n  letter-spacing: 0 !important; \n}"
+              "apply_custom": ".blog-post-card__content\n.text-block {\n  font-family: ZT_Formom, \"Times New Roman\", serif !important;\n  font-weight: 400 !important;\n  font-size: 20px !important;     /* Match your H4 sample */\n  line-height: 41.12px !important;  /* Match your H4 sample */\n  letter-spacing: 0 !important; \n}"
             }
           },
-          "image_yQqLYC": {
+          "image_UnhdLJ": {
             "type": "image",
             "settings": {
-              "name": "Georgia",
+              "name": "ZT_Formom_Italic",
               "custom_font_weight": "none",
-              "custom_font_url": "https://cdn.shopify.com/s/files/1/0714/9659/7540/files/Georgia.woff2?v=1760150472",
+              "custom_font_url": "https://cdn.shopify.com/s/files/1/0714/9659/7540/files/ZT_Formom_Italic.woff2?v=1761018045",
               "apply_h1": false,
               "apply_h2": false,
               "apply_h3": false,
@@ -158,7 +158,7 @@
               "apply_select": false,
               "apply_option": false,
               "apply_small": false,
-              "apply_custom": ".blog-post-card__content\n.text-block {\n  font-family: Georgia, \"Times New Roman\", serif !important;\n  font-weight: 400 !important;\n  font-size: 20px !important;     /* Match your H4 sample */\n  line-height: 42.12px !important;  /* Match your H4 sample */\n  letter-spacing: 0 !important; /* Match your H4 sample */\n}"
+              "apply_custom": ""
             }
           },
           "image_enVHQc": {
@@ -217,7 +217,7 @@
         "block_order": [
           "image_4WLHhK",
           "image_eHqHDr",
-          "image_yQqLYC",
+          "image_UnhdLJ",
           "image_enVHQc",
           "image_R8BtYW"
         ],
