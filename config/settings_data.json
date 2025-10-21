@@ -109,6 +109,32 @@
               "apply_custom": "H1 {\n font-size: 70px;\n line-height: 91px;\n}\n\n.price"
             }
           },
+          "image_eHqHDr": {
+            "type": "image",
+            "settings": {
+              "name": "ZT_Formom",
+              "custom_font_weight": "none",
+              "custom_font_url": "https://cdn.shopify.com/s/files/1/0714/9659/7540/files/ZT_Formom.woff2?v=1761018007",
+              "apply_h1": false,
+              "apply_h2": false,
+              "apply_h3": false,
+              "apply_h4": false,
+              "apply_h5": false,
+              "apply_h6": false,
+              "apply_span": true,
+              "apply_p": true,
+              "apply_a": true,
+              "apply_input": false,
+              "apply_label": false,
+              "apply_legend": false,
+              "apply_button": false,
+              "apply_summary": false,
+              "apply_select": false,
+              "apply_option": false,
+              "apply_small": false,
+              "apply_custom": ".blog-post-card__content\n.text-block {\n  font-family: ZT_Formom, \"Times New Roman\", serif !important;\n  font-weight: 400 !important;\n  font-size: 20px !important;     /* Match your H4 sample */\n  line-height: 42.12px !important;  /* Match your H4 sample */\n  letter-spacing: 0 !important; /* Match your H4 sample */\n}"
+            }
+          },
           "image_yQqLYC": {
             "type": "image",
             "settings": {
@@ -121,9 +147,9 @@
               "apply_h4": false,
               "apply_h5": false,
               "apply_h6": false,
-              "apply_span": true,
-              "apply_p": true,
-              "apply_a": true,
+              "apply_span": false,
+              "apply_p": false,
+              "apply_a": false,
               "apply_input": false,
               "apply_label": false,
               "apply_legend": false,
@@ -190,6 +216,7 @@
         },
         "block_order": [
           "image_4WLHhK",
+          "image_eHqHDr",
           "image_yQqLYC",
           "image_enVHQc",
           "image_R8BtYW"
