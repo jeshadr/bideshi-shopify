@@ -18,7 +18,7 @@
             "text": "<p>{{ closest.blog.title }}</p>",
             "width": "fit-content",
             "max_width": "narrow",
-            "alignment": "left",
+            "alignment": "center",
             "type_preset": "h2",
             "font": "var(--font-primary--family)",
             "font_size": "",
@@ -74,7 +74,7 @@
               "static": true,
               "settings": {
                 "show_date": true,
-                "show_author": false,
+                "show_author": true,
                 "type_preset": "",
                 "alignment": "left",
                 "show_alignment": false,

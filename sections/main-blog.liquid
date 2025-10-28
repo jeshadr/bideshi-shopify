@@ -7,7 +7,7 @@
 ></script>
 
 <blog-posts-list section-id="{{ section.id }}">
-  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+  <div class="section-background section-background--blog color-{{ section.settings.color_scheme }}"></div>
   <div
     class="
       section
@@ -18,6 +18,15 @@
     "
     style="{% render 'spacing-style', settings: section.settings %}"
   >
+    {%- comment -%} Category navigation buttons {%- endcomment -%}
+    <div class="blog-category-nav">
+      <a href="{{ blog.url }}" class="blog-category-btn{% unless blog.current_tags %} active{% endunless %}">All</a>
+      <a href="{{ blog.url }}/tagged/culture" class="blog-category-btn{% if blog.current_tags contains 'culture' %} active{% endif %}">Culture</a>
+      <a href="{{ blog.url }}/tagged/history" class="blog-category-btn{% if blog.current_tags contains 'history' %} active{% endif %}">History</a>
+      <a href="{{ blog.url }}/tagged/theme" class="blog-category-btn{% if blog.current_tags contains 'theme' %} active{% endif %}">Theme</a>
+      <a href="{{ blog.url }}/tagged/misc" class="blog-category-btn{% if blog.current_tags contains 'misc' %} active{% endif %}">Misc</a>
+    </div>
+
     {% content_for 'blocks' %}
 
     {%- paginate blog.articles by 12 -%}
@@ -29,7 +38,7 @@
       >
         {% for article in blog.articles %}
           <div
-            class="blog-post-item"
+            class="blog-post-item{% if forloop.first %} featured-article{% endif %}"
             ref="cards[]"
             data-page="{{ paginate.current_page }}"
           >
@@ -39,6 +48,46 @@
       </div>
       <span ref="viewMoreNext"></span>
     {%- endpaginate -%}
+  </div>
+  
+  {%- comment -%} Newsletter banner after articles - outside constrained section {%- endcomment -%}
+  <div class="newsletter-banner-wrapper">
+    <a href="#newsletter-signup" class="newsletter-banner">
+      <div class="newsletter-banner__track">
+        <div class="newsletter-banner__content">
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+        </div>
+        <div class="newsletter-banner__content" aria-hidden="true">
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+          <span class="newsletter-banner__logo">ব</span>
+          <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
+        </div>
+      </div>
+    </a>
   </div>
 </blog-posts-list>
 
@@ -51,6 +100,109 @@
     --page-width: calc(var(--page-content-width) + (var(--page-margin) * 2));
     --columns-gap: 36px;
     --rows-gap: 36px;
+    overflow-x: clip;
+    background-color: #d9d9d9;
+  }
+
+  /* Background for entire blog section */
+  .section-background--blog {
+    background-color: #d9d9d9 !important;
+  }
+
+  /* Category navigation buttons */
+  .blog-category-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 2rem 1.5rem 2rem;
+    flex-wrap: wrap;
+  }
+
+  .blog-category-btn {
+    display: inline-block;
+    padding: 0.65rem 2.5rem;
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #444;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.01em;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .blog-category-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+    border-color: rgba(0, 0, 0, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .blog-category-btn.active {
+    background-color: #fff;
+    border-color: rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+  }
+
+  @media screen and (max-width: 749px) {
+    .blog-category-nav {
+      padding: 1.5rem 1rem 1rem 1rem;
+      gap: 0.75rem;
+    }
+
+    .blog-category-btn {
+      padding: 0.6rem 1.5rem;
+      font-size: 0.85rem;
+    }
+  }
+
+  /* Newspaper-style blog title */
+  .blog-posts > .text-block {
+    text-align: center !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    background-color: transparent !important;
+    padding: 0 2rem 2rem 2rem !important;
+    --padding-block-start: 0px !important;
+    margin-bottom: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .blog-posts > .text-block p {
+    font-family: 'Playfair Display', 'Georgia', serif !important;
+    font-size: 9.5rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    line-height: 1.1 !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    color: #2c2c2c !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .blog-posts > .text-block {
+      padding: 2rem 2rem !important;
+    }
+
+    .blog-posts > .text-block p {
+      font-size: 2.5rem !important;
+      letter-spacing: 0.08em !important;
+    }
   }
 
   .blog-posts-container {
@@ -60,6 +212,7 @@
     width: 100%;
     column-gap: var(--columns-gap);
     row-gap: var(--rows-gap);
+    align-items: stretch;
   }
 
   /**
@@ -73,6 +226,8 @@
    */
   .blog-post-item {
     --blog-post-card-scale: 0.6;
+    display: flex;
+    height: 100%;
 
     grid-column: span 2;
 
@@ -94,6 +249,8 @@
   .blog-post-item:nth-child(2),
   .blog-post-item:nth-child(3) {
     --blog-post-card-scale: 0.8;
+    display: flex;
+    height: 100%;
 
     grid-column: span 3;
 
@@ -114,21 +271,113 @@
    */
   .blog-post-item:first-child {
     --blog-post-card-scale: 1;
+    display: flex;
+    height: auto;
+    min-height: 0;
 
-    grid-column: span 6;
+    /* Span entire grid and bleed to viewport edges */
+    grid-column: 1 / -1;
+    margin-inline: calc(50% - 50vw);
   }
 
   /**
-   * When there's no image, the blog post item has a border.
+   * Blog post item styling - removed old border styling as cards now have their own styling
    */
   .blog-post-item {
-    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20));
-    padding: 0 1rem 1rem;
+    padding: 0;
   }
 
   .blog-post-item:has(.blog-post-card__image-container) {
-    border: none;
     padding: 0;
+  }
+
+  /* Ensure equal heights for cards in the same row */
+  .blog-posts-container .blog-post-item {
+    align-self: stretch;
+  }
+
+  .blog-posts-container .blog-post-item:nth-child(2),
+  .blog-posts-container .blog-post-item:nth-child(3) {
+    align-self: stretch;
+  }
+
+  /**
+   * Newsletter Marquee Banner
+   */
+  .newsletter-banner-wrapper {
+    width: 100vw;
+    overflow: hidden;
+    margin: 3rem 0;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .newsletter-banner {
+    display: block;
+    background-color: #fbbf24;
+    padding: 2.5rem 0;
+    overflow: hidden;
+    text-decoration: none;
+    border-top: 3px solid #000;
+    border-bottom: 3px solid #000;
+    width: 100%;
+  }
+
+  .newsletter-banner__track {
+    animation: marquee 15s linear infinite;
+    white-space: nowrap;
+  }
+
+  .newsletter-banner__content {
+    display: inline-flex;
+    align-items: center;
+    gap: 3rem;
+    white-space: nowrap;
+  }
+
+  .newsletter-banner__logo {
+    font-size: 5rem;
+    font-weight: 700;
+    color: #000;
+    line-height: 1;
+  }
+
+  .newsletter-banner__text {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 4.5rem;
+    font-weight: 700;
+    font-style: italic;
+    color: #000;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .newsletter-banner {
+      padding: 1.5rem 0;
+    }
+
+    .newsletter-banner__content {
+      gap: 2rem;
+    }
+
+    .newsletter-banner__logo {
+      font-size: 2.5rem;
+    }
+
+    .newsletter-banner__text {
+      font-size: 2rem;
+    }
   }
 {% endstylesheet %}
 
