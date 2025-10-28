@@ -112,7 +112,7 @@
   /* Category navigation buttons */
   .blog-category-nav {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     gap: 1rem;
     padding: 2rem 2rem 1.5rem 2rem;
@@ -121,42 +121,50 @@
 
   .blog-category-btn {
     display: inline-block;
-    padding: 0.65rem 2.5rem;
-    background-color: rgba(255, 255, 255, 0.85);
-    color: #444;
+    padding: 0.3rem 1rem;
+    background-color: #f0f0f0;
+    color: #777;
     text-decoration: none;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 400;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 300;
     font-style: italic;
+    font-family: 'Georgia', serif;
     letter-spacing: 0.01em;
     transition: all 0.2s ease;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #d0d0d0;
+    box-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.1),
+      -1px -1px 3px rgba(255, 255, 255, 0.8);
   }
 
   .blog-category-btn:hover {
-    background-color: rgba(255, 255, 255, 1);
-    border-color: rgba(0, 0, 0, 0.25);
+    background-color: #e8e8e8;
+    color: #666;
     transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 
+      3px 3px 6px rgba(0, 0, 0, 0.12),
+      -2px -2px 4px rgba(255, 255, 255, 0.9);
   }
 
   .blog-category-btn.active {
-    background-color: #fff;
-    border-color: rgba(0, 0, 0, 0.3);
-    font-weight: 500;
+    background-color: #e0e0e0;
+    color: #555;
+    font-weight: 400;
+    box-shadow: 
+      inset 2px 2px 4px rgba(0, 0, 0, 0.15),
+      inset -1px -1px 3px rgba(255, 255, 255, 0.7);
   }
 
   @media screen and (max-width: 749px) {
     .blog-category-nav {
       padding: 1.5rem 1rem 1rem 1rem;
       gap: 0.75rem;
+      justify-content: flex-end;
     }
 
     .blog-category-btn {
-      padding: 0.6rem 1.5rem;
+      padding: 0.3rem 0.9rem;
       font-size: 0.85rem;
     }
   }
@@ -325,8 +333,11 @@
   }
 
   .newsletter-banner__track {
-    animation: marquee 15s linear infinite;
+    animation: marquee 20s linear infinite;
     white-space: nowrap;
+    will-change: transform;
+    display: inline-flex;
+    gap: 3rem;
   }
 
   .newsletter-banner__content {
@@ -358,7 +369,7 @@
       transform: translateX(0);
     }
     100% {
-      transform: translateX(-100%);
+      transform: translateX(-50%);
     }
   }
 
