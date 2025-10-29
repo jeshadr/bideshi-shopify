@@ -31,12 +31,14 @@
 
     {%- paginate blog.articles by 12 -%}
       <span ref="viewMorePrevious"></span>
+      
+      {%- comment -%} First 6 articles (rows 1-3): 1 featured + 2 + 3 {%- endcomment -%}
       <div
         ref="grid"
-        class="blog-posts-container"
+        class="blog-posts-container blog-posts-container--above-banner"
         data-last-page="{{ paginate.pages }}"
       >
-        {% for article in blog.articles %}
+        {% for article in blog.articles limit: 6 %}
           <div
             class="blog-post-item{% if forloop.first %} featured-article{% endif %}"
             ref="cards[]"
@@ -46,12 +48,9 @@
           </div>
         {% endfor %}
       </div>
-      <span ref="viewMoreNext"></span>
-    {%- endpaginate -%}
-  </div>
-  
-  {%- comment -%} Newsletter banner after articles - outside constrained section {%- endcomment -%}
-  <div class="newsletter-banner-wrapper">
+      
+      {%- comment -%} Newsletter banner after first 3 rows {%- endcomment -%}
+      <div class="newsletter-banner-wrapper">
     <a href="#newsletter-signup" class="newsletter-banner">
       <div class="newsletter-banner__track">
         <div class="newsletter-banner__content">
@@ -88,6 +87,29 @@
         </div>
       </div>
     </a>
+  </div>
+  
+  {%- comment -%} Articles after newsletter banner - all in rows of 3 {%- endcomment -%}
+  <div
+    ref="grid"
+    class="blog-posts-container blog-posts-container--below-banner"
+    data-last-page="{{ paginate.pages }}"
+  >
+    {% for article in blog.articles %}
+      {% if forloop.index > 6 %}
+        <div
+          class="blog-post-item"
+          ref="cards[]"
+          data-page="{{ paginate.current_page }}"
+        >
+          {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  
+  <span ref="viewMoreNext"></span>
+  {%- endpaginate -%}
   </div>
 </blog-posts-list>
 
@@ -260,8 +282,8 @@
    * |                   |                   |
    * +-------------------+-------------------+
    */
-  .blog-post-item:nth-child(2),
-  .blog-post-item:nth-child(3) {
+  .blog-posts-container--above-banner .blog-post-item:nth-child(2),
+  .blog-posts-container--above-banner .blog-post-item:nth-child(3) {
     --blog-post-card-scale: 0.8;
     display: flex;
     height: 100%;
@@ -283,7 +305,7 @@
    * |                                       |
    * +---------------------------------------+
    */
-  .blog-post-item:first-child {
+  .blog-posts-container--above-banner .blog-post-item:first-child {
     --blog-post-card-scale: 1;
     display: flex;
     height: auto;
@@ -292,6 +314,14 @@
     /* Span entire grid and bleed to viewport edges */
     grid-column: 1 / -1;
     margin-inline: calc(50% - 50vw);
+  }
+
+  /**
+   * Articles below banner: all use default 3-per-row layout (span 2 each)
+   * No special styling for first, second, or third items
+   */
+  .blog-posts-container--below-banner .blog-post-item {
+    grid-column: span 2;
   }
 
   /**
@@ -310,8 +340,8 @@
     align-self: stretch;
   }
 
-  .blog-posts-container .blog-post-item:nth-child(2),
-  .blog-posts-container .blog-post-item:nth-child(3) {
+  .blog-posts-container--above-banner .blog-post-item:nth-child(2),
+  .blog-posts-container--above-banner .blog-post-item:nth-child(3) {
     align-self: stretch;
   }
 
