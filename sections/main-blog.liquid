@@ -47,40 +47,51 @@
         {% endfor %}
       </div>
       
-      {%- comment -%} Newsletter banner after first 3 rows {%- endcomment -%}
-      <div class="newsletter-banner-wrapper">
+  {%- comment -%} Newsletter banner after first 3 rows {%- endcomment -%}
+  {%- capture banner_logo -%}
+    {%- if section.settings.banner_logo != blank -%}
+      <img
+        src="{{ section.settings.banner_logo | image_url: width: 200 }}"
+        alt="Newsletter logo"
+        class="newsletter-banner__logo-img"
+      >
+    {%- else -%}
+      <span class="newsletter-banner__logo">ব</span>
+    {%- endif -%}
+  {%- endcapture -%}
+  <div class="newsletter-banner-wrapper">
     <a href="#newsletter-signup" class="newsletter-banner">
       <div class="newsletter-banner__track">
         <div class="newsletter-banner__content">
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
         </div>
         <div class="newsletter-banner__content" aria-hidden="true">
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
-          <span class="newsletter-banner__logo">ব</span>
+          {{ banner_logo }}
           <span class="newsletter-banner__text">SIGN UP TO OUR NEWSLETTER</span>
         </div>
       </div>
@@ -432,6 +443,14 @@
     letter-spacing: 0.05em;
     line-height: 1;
   }
+  
+  /* Logo image sized to match text height */
+  .newsletter-banner__logo-img {
+    height: 4.5rem; /* match .newsletter-banner__text */
+    width: auto;
+    display: inline-block;
+    vertical-align: baseline;
+  }
 
   @keyframes marquee {
     0% {
@@ -522,6 +541,10 @@
       font-size: 2rem;
     }
 
+    .newsletter-banner__logo-img {
+      height: 2rem; /* match mobile text size */
+    }
+
     .social-media-button {
       padding: 1.25rem 1.5rem;
       font-size: 1.3rem;
@@ -572,6 +595,11 @@
     "groups": ["header"]
   },
   "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_logo",
+      "label": "Newsletter banner logo image"
+    },
     {
       "type": "color_scheme",
       "id": "color_scheme",
