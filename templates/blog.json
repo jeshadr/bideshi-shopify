@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "main": {
       "type": "main-blog",
@@ -68,18 +69,32 @@
               },
               "blocks": {}
             },
-            "blog-post-details": {
-              "type": "_blog-post-info-text",
-              "name": "t:names.details",
+            "content": {
+              "type": "_blog-post-description",
               "static": true,
               "settings": {
-                "show_date": true,
-                "show_author": true,
-                "type_preset": "",
-                "alignment": "left",
-                "show_alignment": false,
-                "padding-block-start": 0,
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "padding-block-start": 16,
                 "padding-block-end": 0
+              },
+              "blocks": {}
+            },
+            "image-featured": {
+              "type": "_blog-post-image",
+              "static": true,
+              "settings": {
+                "height": "large",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0
               },
               "blocks": {}
             },
@@ -103,9 +118,10 @@
         "title"
       ],
       "settings": {
+        "banner_logo": "shopify://shop_images/Bideshi_Logo.png",
         "color_scheme": "",
         "padding-block-start": 0,
-        "padding-block-end": 48
+        "padding-block-end": 0
       }
     }
   },
