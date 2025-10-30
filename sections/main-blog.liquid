@@ -4,6 +4,125 @@
   fetchpriority="low"
 ></script>
 
+<script>
+  // Sticky blog title that shrinks on scroll
+  document.addEventListener('DOMContentLoaded', function() {
+    const blogTitle = document.querySelector('.blog-posts > .text-block');
+    const titleText = blogTitle ? blogTitle.querySelector('p') : null;
+    
+    if (!blogTitle || !titleText) {
+      console.log('Blog title not found');
+      return;
+    }
+    
+    // Try multiple selectors to find the Shopify header
+    let header = document.querySelector('#shopify-section-header');
+    if (!header) header = document.querySelector('.shopify-section-header');
+    if (!header) header = document.querySelector('header.header');
+    if (!header) header = document.querySelector('.site-header');
+    if (!header) header = document.querySelector('header[role="banner"]');
+    if (!header) header = document.querySelector('header');
+    if (!header) header = document.querySelector('[id*="shopify-section-header"]');
+    
+    console.log('Found header:', header);
+    if (!header) {
+      console.log('Header not found - trying to find any element with "header" in class/id');
+      // List all potential headers
+      const allHeaders = document.querySelectorAll('[class*="header"], [id*="header"]');
+      console.log('All potential headers:', allHeaders);
+      if (allHeaders.length > 0) {
+        header = allHeaders[0];
+        console.log('Using first potential header:', header);
+      }
+    }
+    
+    // Scroll range where shrinking happens
+    const scrollStart = 0;      // Start shrinking immediately
+    const scrollEnd = 400;      // Stop shrinking at 400px
+    
+    // Font size range (in vw units for responsiveness)
+    const maxFontSize = 7;      // 7vw at top
+    const minFontSize = 2.5;    // 2.5vw when fully scrolled
+    
+    // Setup header auto-hide
+    if (header) {
+      header.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    }
+    
+    function handleScroll() {
+      const scrollY = window.scrollY;
+      
+      // Calculate progress (0 to 1)
+      let progress = 0;
+      if (scrollY >= scrollEnd) {
+        progress = 1;
+      } else if (scrollY > scrollStart) {
+        progress = (scrollY - scrollStart) / (scrollEnd - scrollStart);
+      }
+      
+      // Calculate current font size and apply via CSS variable (works with !important)
+      const currentFontSize = maxFontSize - (progress * (maxFontSize - minFontSize));
+      // Write CSS variable on both the container and the <p> to ensure it takes effect
+      blogTitle.style.setProperty('--blog-title-vw', currentFontSize + 'vw');
+      titleText.style.setProperty('--blog-title-vw', currentFontSize + 'vw');
+      
+      // Gradient background starts fading in after title has shrunk (after 150px scroll)
+      const backgroundStart = 150; // Start showing background after this point
+      const backgroundEnd = 450;   // Fully opaque at this point
+      
+      let backgroundProgress = 0;
+      if (scrollY >= backgroundEnd) {
+        backgroundProgress = 1;
+      } else if (scrollY > backgroundStart) {
+        backgroundProgress = (scrollY - backgroundStart) / (backgroundEnd - backgroundStart);
+      }
+      
+      if (backgroundProgress > 0) {
+        const gradientOpacity = 0.95 * backgroundProgress;
+        blogTitle.style.background = `linear-gradient(to bottom, rgba(255, 255, 255, ${gradientOpacity}) 0%, rgba(255, 255, 255, ${gradientOpacity * 0.4}) 60%, rgba(255, 255, 255, 0) 85%, transparent 100%)`;
+        blogTitle.style.backdropFilter = `blur(${10 * backgroundProgress}px)`;
+        blogTitle.style.boxShadow = 'none';
+        blogTitle.style.padding = '0.5rem 0';
+      } else {
+        blogTitle.style.background = 'transparent';
+        blogTitle.style.backdropFilter = 'blur(0px)';
+        blogTitle.style.boxShadow = 'none';
+        blogTitle.style.padding = '0 0 2rem 0';
+      }
+      
+      // Auto-hide Shopify header - only show at very top
+      if (header) {
+        if (scrollY < 50) {
+          // Show header only when at the very top
+          header.style.transform = 'translateY(0)';
+          header.style.opacity = '1';
+          header.style.pointerEvents = 'auto';
+        } else {
+          // Hide header everywhere else
+          header.style.transform = 'translateY(-100%)';
+          header.style.opacity = '0';
+          header.style.pointerEvents = 'none';
+        }
+      }
+    }
+    
+    // Initial check
+    handleScroll();
+    
+    // Listen to scroll events with throttling for performance
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        window.requestAnimationFrame(function() {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  });
+</script>
+
 <blog-posts-list section-id="{{ section.id }}">
   <div class="section-background section-background--blog color-{{ section.settings.color_scheme }}"></div>
   <div
@@ -18,11 +137,32 @@
   >
     {%- comment -%} Category navigation buttons {%- endcomment -%}
     <div class="blog-category-nav">
-      <a href="{{ blog.url }}" class="blog-category-btn{% unless blog.current_tags %} active{% endunless %}">All</a>
-      <a href="{{ blog.url }}/tagged/culture" class="blog-category-btn{% if blog.current_tags contains 'culture' %} active{% endif %}">Culture</a>
-      <a href="{{ blog.url }}/tagged/history" class="blog-category-btn{% if blog.current_tags contains 'history' %} active{% endif %}">History</a>
-      <a href="{{ blog.url }}/tagged/theme" class="blog-category-btn{% if blog.current_tags contains 'theme' %} active{% endif %}">Theme</a>
-      <a href="{{ blog.url }}/tagged/misc" class="blog-category-btn{% if blog.current_tags contains 'misc' %} active{% endif %}">Misc</a>
+      {%- liquid
+        assign has_culture = false
+        assign has_history = false
+        assign has_theme = false
+        assign has_misc = false
+
+        for tag in current_tags
+          assign h = tag | handleize
+          case h
+            when 'culture'
+              assign has_culture = true
+            when 'history'
+              assign has_history = true
+            when 'theme'
+              assign has_theme = true
+            when 'misc'
+              assign has_misc = true
+          endcase
+        endfor
+      -%}
+
+      <a href="{{ blog.url }}" class="blog-category-btn{% if current_tags == blank %} active{% endif %}">All</a>
+      <a href="{{ blog.url }}/tagged/culture" class="blog-category-btn{% if has_culture %} active{% endif %}">Culture</a>
+      <a href="{{ blog.url }}/tagged/history" class="blog-category-btn{% if has_history %} active{% endif %}">History</a>
+      <a href="{{ blog.url }}/tagged/theme" class="blog-category-btn{% if has_theme %} active{% endif %}">Theme</a>
+      <a href="{{ blog.url }}/tagged/misc" class="blog-category-btn{% if has_misc %} active{% endif %}">Misc</a>
     </div>
 
     {% content_for 'blocks' %}
@@ -194,12 +334,12 @@
   }
 
   .blog-category-btn.active {
-    background-color: #e0e0e0;
-    color: #555;
-    font-weight: 400;
+    background-color: #333;
+    color: #fff;
+    font-weight: 500;
     box-shadow: 
-      inset 2px 2px 4px rgba(0, 0, 0, 0.15),
-      inset -1px -1px 3px rgba(255, 255, 255, 0.7);
+      inset 2px 2px 6px rgba(0, 0, 0, 0.4),
+      inset -1px -1px 2px rgba(255, 255, 255, 0.1);
   }
 
   @media screen and (max-width: 749px) {
@@ -218,27 +358,30 @@
   /* Newspaper-style blog title */
   .blog-posts > .text-block {
     text-align: center !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
     background-color: transparent !important;
     --padding-block-start: 0px !important;
     --padding-inline-start: 0px !important;
     --padding-inline-end: 0px !important;
     margin-bottom: 0 !important;
-    width: 100% !important;
+    margin-inline: calc(50% - 50vw) !important;
+    width: 100vw !important;
     max-width: 100vw !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    position: relative !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
     box-sizing: border-box !important;
     overflow-wrap: break-word !important;
     padding: 0 0 2rem 0 !important;
+    transition: padding 0.2s ease-out, background 0.2s ease-out, backdrop-filter 0.2s ease-out !important;
+    backdrop-filter: blur(0px) !important;
   }
 
   .blog-posts > .text-block p {
     font-family: 'Playfair Display', 'Georgia', serif !important;
-    font-size: clamp(3rem, 7vw, 9.5rem) !important;
+    font-size: clamp(1.5rem, var(--blog-title-vw, 7vw), 9.5rem) !important;
     font-weight: 900 !important;
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
@@ -252,18 +395,19 @@
     hyphens: auto !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+    transition: font-size 0.1s ease-out !important;
   }
 
   @media screen and (max-width: 749px) {
     .blog-posts > .text-block p {
-      font-size: clamp(2rem, 8vw, 3.5rem) !important;
+      font-size: clamp(1.2rem, var(--blog-title-vw, 7vw), 3.5rem) !important;
       letter-spacing: 0.08em !important;
     }
   }
 
   @media screen and (max-width: 1024px) and (min-width: 750px) {
     .blog-posts > .text-block p {
-      font-size: clamp(4rem, 9vw, 7rem) !important;
+      font-size: clamp(2rem, var(--blog-title-vw, 7vw), 7rem) !important;
     }
   }
 
@@ -410,14 +554,14 @@
     border-top: 3px solid #000;
     border-bottom: 3px solid #000;
     width: 100%;
+    --banner-font-size: 4.5rem; /* shared size for text and logo image */
   }
 
   .newsletter-banner__track {
-    animation: marquee 35s linear infinite;
-    white-space: nowrap;
-    will-change: transform;
     display: inline-flex;
-    gap: 3rem;
+    white-space: nowrap;
+    animation: scroll-marquee 20s linear infinite;
+    will-change: transform;
   }
 
   .newsletter-banner__content {
@@ -425,10 +569,11 @@
     align-items: center;
     gap: 3rem;
     white-space: nowrap;
+    padding-right: 33.5rem; /* increased spacing to prevent overlap at seam */
   }
 
   .newsletter-banner__logo {
-    font-size: 5rem;
+    font-size: var(--banner-font-size);
     font-weight: 700;
     color: #000;
     line-height: 1;
@@ -436,7 +581,7 @@
 
   .newsletter-banner__text {
     font-family: 'Playfair Display', 'Georgia', serif;
-    font-size: 4.5rem;
+    font-size: var(--banner-font-size);
     font-weight: 700;
     font-style: italic;
     color: #000;
@@ -444,15 +589,15 @@
     line-height: 1;
   }
   
-  /* Logo image sized to match text height */
+  /* Logo image sized to match text height dynamically */
   .newsletter-banner__logo-img {
-    height: 4.5rem; /* match .newsletter-banner__text */
+    height: var(--banner-font-size); /* match text size */
     width: auto;
     display: inline-block;
     vertical-align: baseline;
   }
 
-  @keyframes marquee {
+  @keyframes scroll-marquee {
     0% {
       transform: translateX(0);
     }
@@ -527,23 +672,16 @@
   @media screen and (max-width: 749px) {
     .newsletter-banner {
       padding: 1.5rem 0;
+      --banner-font-size: 2rem; /* mobile scale */
     }
 
     .newsletter-banner__content {
       gap: 2rem;
     }
 
-    .newsletter-banner__logo {
-      font-size: 2.5rem;
-    }
-
-    .newsletter-banner__text {
-      font-size: 2rem;
-    }
-
-    .newsletter-banner__logo-img {
-      height: 2rem; /* match mobile text size */
-    }
+    .newsletter-banner__logo { font-size: var(--banner-font-size); }
+    .newsletter-banner__text { font-size: var(--banner-font-size); }
+    .newsletter-banner__logo-img { height: var(--banner-font-size); }
 
     .social-media-button {
       padding: 1.25rem 1.5rem;
