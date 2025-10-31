@@ -7,11 +7,13 @@
 <script>
   // Sticky blog title that shrinks on scroll
   document.addEventListener('DOMContentLoaded', function() {
-    const blogTitle = document.querySelector('.blog-posts > .text-block');
+    const stickyHeader = document.querySelector('.blog-sticky-header');
+    const blogTitle = stickyHeader ? stickyHeader.querySelector('.text-block') : null;
     const titleText = blogTitle ? blogTitle.querySelector('p') : null;
+    const categoryNav = stickyHeader ? stickyHeader.querySelector('.blog-category-nav') : null;
     
-    if (!blogTitle || !titleText) {
-      console.log('Blog title not found');
+    if (!stickyHeader || !blogTitle || !titleText) {
+      console.log('Sticky header or blog title not found');
       return;
     }
     
@@ -52,6 +54,13 @@
     function handleScroll() {
       const scrollY = window.scrollY;
       
+      // Toggle scrolled class for layout change (buttons move to side of title)
+      if (scrollY > 100) {
+        stickyHeader.classList.add('scrolled');
+      } else {
+        stickyHeader.classList.remove('scrolled');
+      }
+      
       // Calculate progress (0 to 1)
       let progress = 0;
       if (scrollY >= scrollEnd) {
@@ -66,9 +75,9 @@
       blogTitle.style.setProperty('--blog-title-vw', currentFontSize + 'vw');
       titleText.style.setProperty('--blog-title-vw', currentFontSize + 'vw');
       
-      // Gradient background starts fading in after title has shrunk (after 150px scroll)
-      const backgroundStart = 150; // Start showing background after this point
-      const backgroundEnd = 450;   // Fully opaque at this point
+      // Gradient background starts fading in after title has shrunk
+      const backgroundStart = 100; // Start showing background when scrolled class is added
+      const backgroundEnd = 400;   // Fully opaque at this point
       
       let backgroundProgress = 0;
       if (scrollY >= backgroundEnd) {
@@ -78,16 +87,11 @@
       }
       
       if (backgroundProgress > 0) {
-        const gradientOpacity = 0.95 * backgroundProgress;
-        blogTitle.style.background = `linear-gradient(to bottom, rgba(255, 255, 255, ${gradientOpacity}) 0%, rgba(255, 255, 255, ${gradientOpacity * 0.4}) 60%, rgba(255, 255, 255, 0) 85%, transparent 100%)`;
-        blogTitle.style.backdropFilter = `blur(${10 * backgroundProgress}px)`;
-        blogTitle.style.boxShadow = 'none';
-        blogTitle.style.padding = '0.5rem 0';
+        const gradientOpacity = 0.98 * backgroundProgress;
+        // Drive the pseudo-element gradient/blur via CSS var
+        stickyHeader.style.setProperty('--sticky-bg-opacity', String(gradientOpacity));
       } else {
-        blogTitle.style.background = 'transparent';
-        blogTitle.style.backdropFilter = 'blur(0px)';
-        blogTitle.style.boxShadow = 'none';
-        blogTitle.style.padding = '0 0 2rem 0';
+        stickyHeader.style.setProperty('--sticky-bg-opacity', '0');
       }
       
       // Auto-hide Shopify header - only show at very top
@@ -135,37 +139,40 @@
     "
     style="{% render 'spacing-style', settings: section.settings %}"
   >
-    {%- comment -%} Category navigation buttons {%- endcomment -%}
-    <div class="blog-category-nav">
-      {%- liquid
-        assign has_culture = false
-        assign has_history = false
-        assign has_theme = false
-        assign has_misc = false
+    {%- comment -%} Sticky header wrapper for title and tag buttons {%- endcomment -%}
+    <div class="blog-sticky-header">
+      {%- comment -%} Category navigation buttons {%- endcomment -%}
+      <div class="blog-category-nav">
+        {%- liquid
+          assign has_culture = false
+          assign has_history = false
+          assign has_theme = false
+          assign has_misc = false
 
-        for tag in current_tags
-          assign h = tag | handleize
-          case h
-            when 'culture'
-              assign has_culture = true
-            when 'history'
-              assign has_history = true
-            when 'theme'
-              assign has_theme = true
-            when 'misc'
-              assign has_misc = true
-          endcase
-        endfor
-      -%}
+          for tag in current_tags
+            assign h = tag | handleize
+            case h
+              when 'culture'
+                assign has_culture = true
+              when 'history'
+                assign has_history = true
+              when 'theme'
+                assign has_theme = true
+              when 'misc'
+                assign has_misc = true
+            endcase
+          endfor
+        -%}
 
-      <a href="{{ blog.url }}" class="blog-category-btn{% if current_tags == blank %} active{% endif %}">All</a>
-      <a href="{{ blog.url }}/tagged/culture" class="blog-category-btn{% if has_culture %} active{% endif %}">Culture</a>
-      <a href="{{ blog.url }}/tagged/history" class="blog-category-btn{% if has_history %} active{% endif %}">History</a>
-      <a href="{{ blog.url }}/tagged/theme" class="blog-category-btn{% if has_theme %} active{% endif %}">Theme</a>
-      <a href="{{ blog.url }}/tagged/misc" class="blog-category-btn{% if has_misc %} active{% endif %}">Misc</a>
+        <a href="{{ blog.url }}" class="blog-category-btn{% if current_tags == blank %} active{% endif %}">All</a>
+        <a href="{{ blog.url }}/tagged/culture" class="blog-category-btn{% if has_culture %} active{% endif %}">Culture</a>
+        <a href="{{ blog.url }}/tagged/history" class="blog-category-btn{% if has_history %} active{% endif %}">History</a>
+        <a href="{{ blog.url }}/tagged/theme" class="blog-category-btn{% if has_theme %} active{% endif %}">Theme</a>
+        <a href="{{ blog.url }}/tagged/misc" class="blog-category-btn{% if has_misc %} active{% endif %}">Misc</a>
+      </div>
+      
+      {% content_for 'blocks' %}
     </div>
-
-    {% content_for 'blocks' %}
 
     {%- paginate blog.articles by 12 -%}
       <span ref="viewMorePrevious"></span>
@@ -295,15 +302,78 @@
     background-color: #d9d9d9 !important;
   }
 
+  /* Sticky header wrapper for title and buttons */
+  .blog-sticky-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    margin-inline: calc(50% - 50vw) !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    background-color: transparent;
+    backdrop-filter: blur(0px);
+    transition: padding 0.2s ease-out, background 0.2s ease-out, backdrop-filter 0.2s ease-out;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    overflow: visible;
+  }
+
+  /* Full-width gradient layer that can extend below the header to avoid bottom edge */
+  .blog-sticky-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 130%; /* extend beyond bottom to eliminate any hard edge */
+    pointer-events: none;
+    z-index: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, var(--sticky-bg-opacity, 0)) 0%,
+      rgba(255, 255, 255, calc(var(--sticky-bg-opacity, 0) * 0.5)) 50%,
+      rgba(255, 255, 255, calc(var(--sticky-bg-opacity, 0) * 0.1)) 80%,
+      rgba(255, 255, 255, 0) 95%,
+      transparent 100%
+    );
+    backdrop-filter: blur(calc(12px * var(--sticky-bg-opacity, 0)));
+  }
+
+  /* Ensure title sits above gradient but below buttons */
+  .blog-sticky-header .text-block {
+    position: relative;
+    z-index: 1;
+  }
+
+/* When scrolled, make everything more compact but keep same layout */
+.blog-sticky-header.scrolled {
+  padding: 0.5rem 0;
+}
+
   /* Category navigation buttons */
   .blog-category-nav {
+    position: absolute; /* overlay above title */
+    top: 0.5rem;
+    right: 2rem;
+    z-index: 2;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 1rem;
-    padding: 2rem 2rem 1.5rem 2rem;
+    padding: 0; /* overlay, no extra space */
     flex-wrap: wrap;
+    transition: padding 0.2s ease-out, gap 0.2s ease-out, transform 0.2s ease-out;
   }
+
+/* When scrolled, make buttons more compact */
+.blog-sticky-header.scrolled .blog-category-nav {
+  padding: 0.5rem 2rem 0.25rem 2rem;
+  gap: 0.75rem;
+  margin-bottom: 0;
+}
 
   .blog-category-btn {
     display: inline-block;
@@ -342,44 +412,60 @@
       inset -1px -1px 2px rgba(255, 255, 255, 0.1);
   }
 
+  /* When scrolled, make buttons smaller */
+  .blog-sticky-header.scrolled .blog-category-btn {
+    padding: 0.2rem 0.7rem;
+    font-size: 0.75rem;
+  }
+
   @media screen and (max-width: 749px) {
     .blog-category-nav {
+      position: static; /* revert overlay on mobile */
       padding: 1.5rem 1rem 1rem 1rem;
       gap: 0.75rem;
-      justify-content: flex-end;
     }
 
     .blog-category-btn {
       padding: 0.3rem 0.9rem;
       font-size: 0.85rem;
     }
+
+    .blog-sticky-header.scrolled .blog-category-nav {
+      padding: 0.5rem 1rem 0.5rem 1rem;
+    }
+
+    .blog-sticky-header.scrolled .blog-category-btn {
+      padding: 0.2rem 0.65rem;
+      font-size: 0.7rem;
+    }
   }
 
-  /* Newspaper-style blog title */
-  .blog-posts > .text-block {
+  /* Newspaper-style blog title (inside sticky header) */
+  .blog-sticky-header .text-block {
     text-align: center !important;
     background-color: transparent !important;
     --padding-block-start: 0px !important;
     --padding-inline-start: 0px !important;
     --padding-inline-end: 0px !important;
     margin-bottom: 0 !important;
-    margin-inline: calc(50% - 50vw) !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
+    width: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 100 !important;
     box-sizing: border-box !important;
     overflow-wrap: break-word !important;
-    padding: 0 0 2rem 0 !important;
-    transition: padding 0.2s ease-out, background 0.2s ease-out, backdrop-filter 0.2s ease-out !important;
-    backdrop-filter: blur(0px) !important;
+    padding: 4rem 0 2rem 0 !important; /* added top padding in default state */
+    transition: padding 0.2s ease-out !important;
+    align-self: center !important;
   }
 
-  .blog-posts > .text-block p {
+  /* When scrolled, make title more compact but keep centered */
+  .blog-sticky-header.scrolled .text-block {
+    padding: 0.4rem 0 0.5rem 0 !important; /* add top padding above title */
+    margin-top: 0 !important;
+  }
+
+  .blog-sticky-header .text-block p {
     font-family: 'Playfair Display', 'Georgia', serif !important;
     font-size: clamp(1.5rem, var(--blog-title-vw, 7vw), 9.5rem) !important;
     font-weight: 900 !important;
@@ -399,14 +485,14 @@
   }
 
   @media screen and (max-width: 749px) {
-    .blog-posts > .text-block p {
+    .blog-sticky-header .text-block p {
       font-size: clamp(1.2rem, var(--blog-title-vw, 7vw), 3.5rem) !important;
       letter-spacing: 0.08em !important;
     }
   }
 
   @media screen and (max-width: 1024px) and (min-width: 750px) {
-    .blog-posts > .text-block p {
+    .blog-sticky-header .text-block p {
       font-size: clamp(2rem, var(--blog-title-vw, 7vw), 7rem) !important;
     }
   }
