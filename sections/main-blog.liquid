@@ -40,7 +40,7 @@
     
     // Scroll range where shrinking happens
     const scrollStart = 0;      // Start shrinking immediately
-    const scrollEnd = 400;      // Stop shrinking at 400px
+    const scrollEnd = 280;      // Stop shrinking at 250px (faster)
     
     // Font size range (in vw units for responsiveness)
     const maxFontSize = 7;      // 7vw at top
@@ -74,6 +74,17 @@
       // Write CSS variable on both the container and the <p> to ensure it takes effect
       blogTitle.style.setProperty('--blog-title-vw', currentFontSize + 'vw');
       titleText.style.setProperty('--blog-title-vw', currentFontSize + 'vw');
+
+      // Non-linear upward motion: ease-in reduce top padding so the title rises slowly at first,
+      // then faster as you scroll further. Keeps the title within the sticky header.
+      const padTopStartPx = 64;   // 4rem default top padding
+      const padTopEndPx = 10;     // ~0.625rem minimal top padding
+      const easedIn = Math.pow(progress, 2); // ease-in (slow start, faster later)
+      const currentPadTop = padTopStartPx - (padTopStartPx - padTopEndPx) * easedIn;
+      blogTitle.style.setProperty('--title-padding-top', currentPadTop + 'px');
+      
+      // Animate tag buttons position to keep layout clean when scrolled
+
       
       // Gradient background starts fading in after title has shrunk
       const backgroundStart = 100; // Start showing background when scrolled class is added
@@ -124,6 +135,87 @@
         ticking = true;
       }
     });
+
+    // --- Featured article slider for the first row -----------------------
+    function initFeaturedSlider() {
+      const grid = document.querySelector('.blog-posts-container--above-banners') || document.querySelector('.blog-posts-container--above-banner');
+      const featuredItem = document.querySelector('.blog-posts-container--above-banner .blog-post-item.featured-article');
+      if (!featuredItem || !grid) return;
+
+      // Controls
+      const prevBtn = featuredItem.querySelector('.featured-nav--prev');
+      const nextBtn = featuredItem.querySelector('.featured-nav--next');
+      if (!prevBtn || !nextBtn) return;
+
+      // Templates for featured card content
+      const templatesRoot = document.getElementById('featured-templates') || document.getElementById('featured-templates-root');
+      if (!templatesRoot) return;
+
+      const templateNodeList = (templatesRoot.content ? templatesRoot.content : templatesRoot).querySelectorAll('template');
+      const templateNodes = Array.from(templateNodeList)
+        .filter(function(t){ return t.hasAttribute('data-index'); })
+        .sort(function(a,b){ return Number(a.getAttribute('data-index')) - Number(b.getAttribute('data-index')); });
+      if (templateNodes.length === 0) return;
+
+      let current = 0;
+
+      function createCardFromTemplate(idx){
+        const t = templateNodes[idx];
+        if (!t) return null;
+        const frag = t.content ? t.content.cloneNode(true) : document.createRange().createContextualFragment(t.innerHTML);
+        const card = frag.querySelector('.blog-post-card');
+        return card ? card : null;
+      }
+
+      function swapTo(index, dir){
+        const oldCard = featuredItem.querySelector('.blog-post-card');
+        const incoming = createCardFromTemplate(index);
+        if (!incoming || !oldCard) return;
+
+        // Prepare incoming overlay
+        incoming.classList.add('blog-post-card--incoming');
+        incoming.style.position = 'absolute';
+        incoming.style.top = '0';
+        incoming.style.left = '0';
+        incoming.style.right = '0';
+        featuredItem.appendChild(incoming);
+
+        // Animate cross-fade / slide
+        requestAnimationFrame(function(){
+          oldCard.classList.add('is-exiting');
+          incoming.classList.add('is-entering');
+        });
+
+        function onDone(e){
+          if (e && e.target !== incoming) return; // ensure event from incoming
+          incoming.removeEventListener('transitionend', onDone);
+          // Remove old card, finalize incoming
+          if (oldCard && oldCard.parentNode) oldCard.parentNode.removeChild(oldCard);
+          incoming.classList.remove('blog-post-card--incoming','is-entering');
+          incoming.style.removeProperty('position');
+          incoming.style.removeProperty('top');
+          incoming.style.removeProperty('left');
+          incoming.style.removeProperty('right');
+        }
+        incoming.addEventListener('transitionend', onDone);
+      }
+
+      function go(delta){
+        const total = templateNodes.length;
+        if (total <= 1) return;
+        current = (current + delta + total) % total;
+        swapTo(current, delta);
+      }
+
+      prevBtn.addEventListener('click', function(ev){ ev.preventDefault(); go(-1); });
+      nextBtn.addEventListener('click', function(ev){ ev.preventDefault(); go(1); });
+    }
+
+    // kick off slider after a tick so DOM is ready
+    requestAnimationFrame(initWithCatch);
+    function initWithCatch(){
+      try { initFeaturedSlider(); } catch(e) { console && console.warn('Feature slider init error', e); }
+    }
   });
 </script>
 
@@ -183,15 +275,24 @@
         class="blog-posts-container blog-posts-container--above-banner"
         data-last-page="{{ paginate.pages }}"
       >
-        {% for article in blog.articles limit: 6 %}
-          <div
-            class="blog-post-item{% if forloop.first %} featured-article{% endif %}"
-            ref="cards[]"
-            data-page="{{ paginate.current_page }}"
-          >
-            {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
-          </div>
-        {% endfor %}
+    {% for article in blog.articles limit: 6 %}
+      <div
+        class="blog-post-item{% if forloop.first %} featured-article{% endif %}"
+        ref="cards[]"
+        data-page="{{ paginate.current_page }}"
+        data-index="{{ forloop.index0 }}"
+      >
+        {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+        {% if forloop.first %}
+          <button class="featured-nav featured-nav--prev" aria-label="Previous article" type="button">
+            &#10094;
+          </button>
+          <button class="featured-nav featured-nav--next" aria-label="Next article" type="button">
+            &#10095;
+          </button>
+        {% endif %}
+      </div>
+    {% endfor %}
       </div>
       
   {%- comment -%} Newsletter banner after first 3 rows {%- endcomment -%}
@@ -244,6 +345,15 @@
       </div>
     </a>
   </div>
+
+  {%- comment -%} Hidden templates for featured slider (first 3 most recent articles) {%- endcomment -%}
+  <template id="featured-templates-root">
+    {% for article in blog.articles limit: 3 %}
+      <template data-index="{{ forloop.index0 }}">
+        {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+      </template>
+    {% endfor %}
+  </template>
   
   {%- comment -%} Social media buttons section {%- endcomment -%}
   <div class="social-media-buttons-wrapper">
@@ -318,6 +428,7 @@
     flex-direction: column;
     align-items: flex-end;
     overflow: visible;
+    padding-top: 5rem; /* push header content down a bit */
   }
 
   /* Full-width gradient layer that can extend below the header to avoid bottom edge */
@@ -356,7 +467,7 @@
   /* Category navigation buttons */
   .blog-category-nav {
     position: absolute; /* overlay above title */
-    top: 0.5rem;
+    top: 3.5rem; /* initial position with more padding */
     right: 2rem;
     z-index: 2;
     display: flex;
@@ -365,11 +476,12 @@
     gap: 1rem;
     padding: 0; /* overlay, no extra space */
     flex-wrap: wrap;
-    transition: padding 0.2s ease-out, gap 0.2s ease-out, transform 0.2s ease-out;
+    transition: padding 0.2s ease-out, gap 0.2s ease-out, top 0.2s ease-out;
   }
 
 /* When scrolled, make buttons more compact */
 .blog-sticky-header.scrolled .blog-category-nav {
+  top: 1rem; /* compact top offset when scrolled */
   padding: 0.5rem 2rem 0.25rem 2rem;
   gap: 0.75rem;
   margin-bottom: 0;
@@ -417,10 +529,22 @@
   }
 
   @media screen and (max-width: 749px) {
+    /* Hide category tag buttons on mobile (user request). Desktop unaffected. */
+    .blog-category-nav,
+    .blog-sticky-header.scrolled .blog-category-nav {
+      display: none !important;
+    }
+
     .blog-category-nav {
-      position: static; /* revert overlay on mobile */
-      padding: 1.5rem 1rem 1rem 1rem;
-      gap: 0.75rem;
+      position: static !important; /* revert overlay on mobile */
+      padding: 1.5rem 1rem 1rem 1rem !important;
+      gap: 0.75rem !important;
+      justify-content: center !important; /* center buttons on mobile */
+      left: auto !important;
+      right: auto !important;
+      transform: none !important;
+      align-self: center !important; /* override parent align-items:flex-end */
+      margin-inline: auto; /* ensure centering regardless of width */
     }
 
     .blog-category-btn {
@@ -429,7 +553,14 @@
     }
 
     .blog-sticky-header.scrolled .blog-category-nav {
-      padding: 0.5rem 1rem 0.5rem 1rem;
+      position: static !important;
+      padding: 0.5rem 1rem 0.5rem 1rem !important;
+      justify-content: center !important; /* keep centered when scrolled */
+      left: auto !important;
+      right: auto !important;
+      transform: none !important;
+      align-self: center !important; /* keep centered when sticky header aligns to end */
+      margin-inline: auto;
     }
 
     .blog-sticky-header.scrolled .blog-category-btn {
@@ -452,14 +583,18 @@
     justify-content: center !important;
     box-sizing: border-box !important;
     overflow-wrap: break-word !important;
-    padding: 4rem 0 2rem 0 !important; /* added top padding in default state */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: var(--title-padding-top, 4rem) !important; /* driven by JS for eased upward motion */
+    padding-bottom: var(--title-padding-bottom, 7rem) !important;
     transition: padding 0.2s ease-out !important;
     align-self: center !important;
   }
 
   /* When scrolled, make title more compact but keep centered */
   .blog-sticky-header.scrolled .text-block {
-    padding: 0.4rem 0 0.5rem 0 !important; /* add top padding above title */
+    /* Top padding is driven by JS var; keep only a compact bottom padding when scrolled */
+    padding-bottom: 0.5rem !important;
     margin-top: 0 !important;
   }
 
@@ -482,7 +617,14 @@
     transition: font-size 0.1s ease-out !important;
   }
 
+  
+
   @media screen and (max-width: 749px) {
+    /* Reduce top/bottom padding for title on mobile */
+    .blog-sticky-header .text-block {
+      padding: 1.25rem 0 0.75rem 0 !important;
+    }
+
     .blog-sticky-header .text-block p {
       font-size: clamp(1.2rem, var(--blog-title-vw, 7vw), 3.5rem) !important;
       letter-spacing: 0.08em !important;
@@ -587,6 +729,37 @@
     grid-column: 1 / -1;
     margin-inline: calc(50% - 50vw);
   }
+
+  /* Ensure the featured container can host absolutely-positioned children (nav buttons, transitions) */
+  .blog-posts-container--above-banner .blog-post-item.featured-article {
+    position: relative;
+  }
+
+  /* Featured image navigation buttons */
+  .featured-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 6rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: transform .2s ease, opacity .2s ease;
+    opacity: 0.85;
+  }
+  .featured-nav:hover { opacity: 1; transform: translateY(-50%) scale(1.1); }
+  .featured-nav--prev { left: 24px; }
+  .featured-nav--next { right: 24px; }
+
+  /* Cross-fade + slide animation for swapping featured card content */
+  .blog-post-item.featured-article .blog-post-card { transition: opacity .35s ease, transform .35s ease; }
+  .blog-post-item.featured-article .blog-post-card.is-exiting { opacity: 0; transform: translateX(-2%); }
+  .blog-post-item.featured-article .blog-post-card--incoming { opacity: 0; transform: translateX(2%); }
+  .blog-post-item.featured-article .blog-post-card--incoming.is-entering { opacity: 1; transform: translateX(0); }
 
   /**
    * Articles below banner: all use default 3-per-row layout (span 2 each)
