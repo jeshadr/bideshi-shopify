@@ -15,54 +15,10 @@
       {% render 'spacing-style', settings: section.settings %}
     "
   >
-<header>
-    {%- comment -%}
-      Render custom newsletter layout for articles tagged "newsletter".
-      Otherwise fall back to the normal content_for blocks.
-    {%- endcomment -%}
-
-    {% if article.tags contains 'newsletter' %}
-      <div class="bideshi-news-wrap">
-        <div class="bideshi-masthead">
-          <span class="bideshi-symbol">ব</span>
-          <h1 class="bideshi-title">THE BIDESHI TIMES</h1>
-        </div>
-
-        <div class="bideshi-meta-line">
-          <div class="bideshi-date">{{ article.published_at | date: "%B %d, %Y" }}</div>
-          <div class="bideshi-section">HISTORY &amp; CULTURE</div>
-          <div class="bideshi-by">BY {{ article.author | default: section.settings.author }}</div>
-        </div>
-
-        <h2 class="bideshi-headline">{{ article.title }}</h2>
-      </div>
-    {% else %}
-      {%- content_for 'block', id: 'blog-post-title', type: 'text' %} 
-      {%- content_for 'block', id: 'blog-post-details', type: '_blog-post-info-text' %} 
-    {% endif %}
-  </header>
-
-  {%- if article.tags contains 'newsletter' -%}
-    {%- comment -%}
-      Featured hero (full width) for newsletter posts
-    {%- endcomment -%}
-    {% if article.image %}
-      <div class="bideshi-hero">
-        <img src="{{ article.image | img_url: '2048x' }}" alt="{{ article.title }}">
-      </div>
-    {% endif %}
-
-    <main class="bideshi-article-frame">
-      <div class="bideshi-article-inner">
-        {{ article.content }}
-      </div>
-    </main>
-  {%- else -%}
-    {%- if article.image -%}
-      {%- content_for 'block', id: 'blog-post-image', type: '_blog-post-featured-image', image: article.image %} 
-    {%- endif -%}
-    {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' %} 
-  {%- endif -%}
+    <header>
+      {%- content_for 'block', id: 'blog-post-title', type: 'text' %}
+      {%- content_for 'block', id: 'blog-post-details', type: '_blog-post-info-text' %}
+    </header>
 
     {%- if article.image -%}
       {%- content_for 'block', id: 'blog-post-image', type: '_blog-post-featured-image', image: article.image %}
@@ -105,109 +61,6 @@
 </script>
 
 {% stylesheet %}
-.bideshi-news-wrap{
-  max-width: var(--normal-content-width);
-  margin: 0 auto 10px;
-  padding: 18px 24px 6px;
-  font-family: "Libre Baskerville", Georgia, serif;
-}
-
-.bideshi-masthead{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-  border:1px solid rgba(0,0,0,0.15);
-  padding:18px;
-  margin-bottom:10px;
-}
-.bideshi-symbol{
-  font-size:36px;
-  line-height:1;
-  font-weight:700;
-  margin-right:8px;
-}
-.bideshi-title{
-  font-size:42px;
-  margin:0;
-  letter-spacing:2px;
-  text-align:center;
-  font-weight:600;
-}
-
-.bideshi-meta-line{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  font-size:12px;
-  color: rgba(0,0,0,0.6);
-  padding:6px 0;
-  max-width: var(--normal-content-width);
-  margin: 0 auto 8px;
-}
-.bideshi-headline{
-  max-width: 90%;
-  margin: 8px auto 18px;
-  text-align:center;
-  font-size:26px;
-  padding:12px 14px;
-  border: 2px solid rgba(0,0,0,0.12);
-  background: rgba(255, 250, 230, 0.6);
-  box-sizing:border-box;
-  font-weight:700;
-}
-
-.bideshi-hero img{
-  width:100%;
-  height:auto;
-  display:block;
-  object-fit:cover;
-  margin: 0 auto 20px;
-}
-
-/* framed article body with centered narrow column like the screenshot */
-.bideshi-article-frame{
-  max-width: 1100px;
-  margin: 0 auto 40px;
-  padding: 18px;
-  box-sizing: border-box;
-}
-.bideshi-article-inner{
-  border:1px solid rgba(0,0,0,0.08);
-  padding: 28px;
-  background: #fff;
-  box-shadow: 0 2px 0 rgba(0,0,0,0.03);
-  font-size: 18px;
-  line-height: 1.65;
-  color: rgb(var(--color-foreground-rgb));
-  font-family: Georgia, "Times New Roman", serif;
-}
-
-/* make images inside content responsive and captioned if figcaption exists */
-.bideshi-article-inner img{
-  width:100%;
-  height:auto;
-  display:block;
-  margin: 18px 0;
-}
-.bideshi-article-inner figure{
-  margin: 18px 0;
-}
-.bideshi-article-inner figcaption{
-  text-align:center;
-  font-size:13px;
-  opacity:0.7;
-  margin-top:6px;
-}
-
-/* small screen adjustments */
-@media (max-width: 740px){
-  .bideshi-masthead{padding:12px}
-  .bideshi-title{font-size:30px}
-  .bideshi-headline{font-size:20px; padding:10px}
-  .bideshi-article-inner{padding:18px; font-size:16px}
-
   .blog-post-comments-container {
     width: 100%;
     max-width: var(--normal-content-width);
