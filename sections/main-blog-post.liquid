@@ -39,6 +39,8 @@
           <img 
             src="{{ article.image | img_url: '1200x' }}" 
             alt="{{ article.image.alt | escape }}"
+            width="{{ article.image.width }}"
+            height="{{ article.image.height }}"
             loading="lazy"
           />
         </div>
