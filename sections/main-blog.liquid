@@ -343,7 +343,7 @@
     {%- endif -%}
   {%- endcapture -%}
   <div class="newsletter-banner-wrapper">
-    <a href="#newsletter-signup" class="newsletter-banner">
+    <a href="#Ecomsend_popups_open_281589" class="newsletter-banner">
       <div class="newsletter-banner__track">
         <div class="newsletter-banner__content">
           {{ banner_logo }}
@@ -807,6 +807,11 @@
   .blog-post-item.featured-article .blog-post-card.is-exiting { opacity: 0; transform: translateX(-2%); }
   .blog-post-item.featured-article .blog-post-card--incoming { opacity: 0; transform: translateX(2%); }
   .blog-post-item.featured-article .blog-post-card--incoming.is-entering { opacity: 1; transform: translateX(0); }
+
+  /* Mobile: hide featured prev/next arrows */
+  @media screen and (max-width: 749px) {
+    .featured-nav { display: none !important; }
+  }
 
   /**
    * Articles below banner: horizontal scrolling layout
