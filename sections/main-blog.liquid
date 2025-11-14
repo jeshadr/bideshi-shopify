@@ -23,6 +23,7 @@
     const blogTitle = stickyHeader ? stickyHeader.querySelector('.text-block') : null;
     const titleText = blogTitle ? blogTitle.querySelector('p') : null;
     const categoryNav = stickyHeader ? stickyHeader.querySelector('.blog-category-nav') : null;
+    const blogLogo = document.querySelector('.blog-logo-link');
     
     if (!stickyHeader || !blogTitle || !titleText) {
       console.log('Sticky header or blog title not found');
@@ -62,6 +63,10 @@
     const titleTopStart = 9;   // 15rem starting position (matches bottom padding)
     const titleTopEnd = 1;      // 1rem ending position (aligned with buttons)
     
+    // Logo size range (in px)
+    const maxLogoSize = 28;    // Starting size
+    const minLogoSize = 20;    // Smaller when scrolled
+    
     // Force-hide Shopify header on this page at all times
     let headerGroup = document.getElementById('header-group');
     if (headerGroup) {
@@ -92,6 +97,12 @@
       // Title moves up to align with logo/buttons: from 6rem to 1rem (same row as buttons)
       const currentTopRem = titleTopStart - (progress * (titleTopStart - titleTopEnd));
       blogTitle.style.setProperty('--title-padding-top', currentTopRem + 'rem');
+      
+      // Logo shrinks on scroll
+      if (blogLogo) {
+        const currentLogoSize = maxLogoSize - (progress * (maxLogoSize - minLogoSize));
+        blogLogo.style.setProperty('--logo-size', currentLogoSize + 'px');
+      }
       
       // Gradient background only appears when header is compact (title has shrunk significantly)
       // Start gradient when title animation is 70% complete
@@ -419,6 +430,15 @@
         >
           {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
         </div>
+      {% elsif forloop.index > 3 %}
+        {%- comment -%} Articles 4-6: show in scroller on mobile, hide on desktop {%- endcomment -%}
+        <div
+          class="blog-post-item blog-post-item--mobile-only"
+          ref="cards[]"
+          data-page="{{ paginate.current_page }}"
+        >
+          {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+        </div>
       {% endif %}
     {% endfor %}
   </div>
@@ -510,7 +530,7 @@
     pointer-events: auto; /* re-enable clicks for buttons */
   }
 
-  /* Custom blog header logo (left side, same line as tags) - fixed at compact size */
+  /* Custom blog header logo (left side, same line as tags) - fixed on desktop */
   .blog-logo-link {
     position: absolute;
     top: 1rem; /* fixed position, same as buttons */
@@ -523,14 +543,14 @@
     pointer-events: auto; /* re-enable clicks for logo */
   }
   .blog-logo-link img {
-    height: 28px; /* fixed compact size */
+    height: 28px; /* Fixed size on desktop */
     width: auto;
     display: block;
     filter: drop-shadow(0 0 0 transparent);
   }
   .blog-logo-fallback {
     display: inline-block;
-    height: 28px; /* fixed compact size */
+    height: 28px; /* Fixed size on desktop */
     width: 28px;
     line-height: 28px;
     text-align: center;
@@ -583,15 +603,23 @@
       display: none !important;
     }
 
-    /* Keep logo visible and compact on mobile */
+    /* Center logo on mobile with animation */
     .blog-logo-link {
       top: 0.75rem;
-      left: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
     }
-    .blog-logo-link img,
-    .blog-logo-fallback {
-      height: 28px;
+    .blog-logo-link img {
+      height: var(--logo-size, 28px); /* Animated via JS on mobile only */
       width: auto;
+      transition: height 0.1s ease-out; /* Smooth shrinking on mobile */
+    }
+    .blog-logo-fallback {
+      height: var(--logo-size, 28px); /* Animated via JS on mobile only */
+      width: var(--logo-size, 28px);
+      line-height: var(--logo-size, 28px);
+      font-size: calc(var(--logo-size, 28px) * 0.64);
+      transition: all 0.1s ease-out; /* Smooth shrinking on mobile */
     }
 
     .blog-category-nav {
@@ -667,9 +695,9 @@
   
 
   @media screen and (max-width: 749px) {
-    /* Reduce top/bottom padding for title on mobile */
+    /* Reduce top/bottom padding for title on mobile - add space for logo */
     .blog-sticky-header .text-block {
-      padding: 1.25rem 0 0.75rem 0 !important;
+      padding: 1.75rem 0 0.75rem 0 !important; /* Increased top padding for logo space */
     }
 
     .blog-sticky-header .text-block p {
@@ -811,6 +839,19 @@
   /* Mobile: hide featured prev/next arrows */
   @media screen and (max-width: 749px) {
     .featured-nav { display: none !important; }
+    
+    /* MOBILE ONLY: Make first article behave like normal card */
+    .blog-posts-container--above-banner .blog-post-item:first-child {
+      --blog-post-card-scale: 0.5; /* Same as other cards */
+      grid-column: span 6 !important; /* Full width on mobile */
+      margin-inline: 0 !important; /* Remove viewport bleed */
+      height: 100% !important;
+    }
+    
+    /* MOBILE ONLY: Hide articles 4-6 from top grid */
+    .blog-posts-container--above-banner .blog-post-item:nth-child(n+4) {
+      display: none !important;
+    }
   }
 
   /**
@@ -856,6 +897,13 @@
   .blog-posts-container--below-banner .blog-post-item:first-child {
     scroll-snap-align: start;
     margin-left: 0; /* No extra margin needed, padding handles it */
+  }
+
+  /* Desktop: hide articles 4-6 from horizontal scroller (they're in top grid) */
+  @media screen and (min-width: 750px) {
+    .blog-post-item--mobile-only {
+      display: none !important;
+    }
   }
 
   @media screen and (max-width: 749px) {
