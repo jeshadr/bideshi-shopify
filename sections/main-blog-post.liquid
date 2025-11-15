@@ -1,3 +1,4 @@
+{% render 'inline-media-styles' %} {%- comment -%} Render inline media styles for multimedia embeddings {%- endcomment -%}
 
 <div class="article-page-background"></div>
 <div class="article-page-wrapper">
@@ -97,10 +98,10 @@
       </div>
     </div>
 
-    {%- comment -%} Article Content {%- endcomment -%}
+    {%- comment -%} Article Content with Inline Media Support {%- endcomment -%}
     <div class="article-content rte">
       <rte-formatter>
-        {{ article.content }}
+        {% render 'render-inline-media', content: article.content, article: article %}
       </rte-formatter>
     </div>
 
