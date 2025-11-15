@@ -49,7 +49,7 @@
     opacity: 0;
     transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
     pointer-events: none;
-    max-width: 315px;
+    max-width: 320px;
     width: max-content;
   }
 
@@ -60,81 +60,85 @@
   }
 
   .article-tooltip-content {
-    background: #ffffff;
+    background: #ede3c9;
     color: #000000;
-    padding: 11px 14px;
-    border-radius: 4px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    font-size: 13px;
-    line-height: 1.5;
+    padding: 0;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border: none;
+    font-size: 14px;
+    line-height: 1.6;
     position: relative;
+    overflow: hidden;
+  }
+
+  /* Tooltip header with icon and title */
+  .tooltip-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 14px 8px 14px;
+  }
+
+  .tooltip-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: #000000;
+  }
+
+  .tooltip-title {
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    font-weight: 600;
+    font-style: italic;
+    margin: 0;
+    color: #000000;
+    line-height: 1.3;
   }
 
   /* Tooltip image styling */
   .tooltip-image {
     display: block;
-    width: 100%;
+    width: calc(100% - 40px);
     height: auto;
-    max-width: 100%;
-    max-height: 270px;
-    object-fit: contain;
-    margin: 0;
-    border-radius: 4px 4px 0 0;
-  }
-
-  /* Adjust tooltip size for images */
-  .article-tooltip-content:has(.tooltip-image) {
-    padding: 0;
-    max-width: 360px;
+    max-width: calc(100% - 40px);
+    max-height: 220px;
+    object-fit: cover;
+    margin: 0 20px;
+    border-radius: 12px;
   }
 
   .tooltip-text {
-    padding: 11px 14px;
+    padding: 10px 14px 14px 14px;
+    font-family: 'Georgia', serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #000000;
   }
 
   /* Arrow pointing to the trigger word */
   .article-tooltip-content::before {
     content: '';
     position: absolute;
-    bottom: -6px;
+    bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid #ffffff;
-    filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.05));
-  }
-
-  .article-tooltip-content::after {
-    content: '';
-    position: absolute;
-    bottom: -7px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 7px solid rgba(0, 0, 0, 0.1);
-    z-index: -1;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #ede3c9;
+    filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.1));
   }
 
   /* Arrow flips when tooltip is below */
   .article-tooltip-popup.below .article-tooltip-content::before {
     bottom: auto;
-    top: -6px;
+    top: -8px;
     border-top: none;
-    border-bottom: 6px solid #ffffff;
-  }
-
-  .article-tooltip-popup.below .article-tooltip-content::after {
-    bottom: auto;
-    top: -7px;
-    border-top: none;
-    border-bottom: 7px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 10px solid #ede3c9;
+    filter: drop-shadow(0 -3px 2px rgba(0, 0, 0, 0.1));
   }
 
   /* Mobile responsive */
@@ -145,10 +149,25 @@
 
     .tooltip-image {
       max-height: 180px;
+      border-radius: 10px;
     }
 
-    .article-tooltip-content:has(.tooltip-image) {
-      max-width: calc(100vw - 40px);
+    .tooltip-header {
+      padding: 10px 12px 6px 12px;
+    }
+
+    .tooltip-title {
+      font-size: 14px;
+    }
+
+    .tooltip-text {
+      padding: 8px 12px 12px 12px;
+      font-size: 12px;
+    }
+
+    .tooltip-icon {
+      width: 18px;
+      height: 18px;
     }
   }
 

@@ -66,8 +66,12 @@ class SimpleTooltips {
     // Mark as processed
     element.classList.add('tooltip-processed', 'has-tooltip');
     
+    // Get the term text from the element
+    const term = element.textContent.trim();
+    
     // Create tooltip element with optional image
     const tooltip = this.createTooltipElement(
+      term,
       element.dataset.tooltip,
       element.dataset.tooltipImage
     );
@@ -104,26 +108,32 @@ class SimpleTooltips {
     });
   }
 
-  createTooltipElement(content, imageUrl) {
+  createTooltipElement(term, content, imageUrl) {
     const tooltip = document.createElement('div');
     tooltip.className = 'article-tooltip-popup';
     
-    // Build tooltip content with optional image
-    let tooltipContent = '';
+    // Build tooltip content with term as title and optional image
+    let tooltipContent = `
+      <div class="article-tooltip-content">
+        <div class="tooltip-header">
+          <svg class="tooltip-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+            <text x="10" y="14" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="currentColor">i</text>
+          </svg>
+          <h3 class="tooltip-title">${term}</h3>
+        </div>
+    `;
+    
     if (imageUrl) {
-      tooltipContent = `
-        <div class="article-tooltip-content">
-          <img src="${imageUrl}" alt="Tooltip image" class="tooltip-image" loading="lazy">
-          <div class="tooltip-text">${content}</div>
-        </div>
-      `;
-    } else {
-      tooltipContent = `
-        <div class="article-tooltip-content">
-          ${content}
-        </div>
+      tooltipContent += `
+        <img src="${imageUrl}" alt="${term}" class="tooltip-image" loading="lazy">
       `;
     }
+    
+    tooltipContent += `
+        <div class="tooltip-text">${content}</div>
+      </div>
+    `;
     
     tooltip.innerHTML = tooltipContent;
     document.body.appendChild(tooltip);
