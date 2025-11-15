@@ -17,18 +17,20 @@
 </style>
 
 <script>
-  // 
-  document.addEventListener('DOMContentLoaded', function() {
-    const stickyHeader = document.querySelector('.blog-sticky-header');
-    const blogTitle = stickyHeader ? stickyHeader.querySelector('.text-block') : null;
-    const titleText = blogTitle ? blogTitle.querySelector('p') : null;
-    const categoryNav = stickyHeader ? stickyHeader.querySelector('.blog-category-nav') : null;
-    const blogLogo = document.querySelector('.blog-logo-link');
-    
-    if (!stickyHeader || !blogTitle || !titleText) {
-      console.log('Sticky header or blog title not found');
-      return;
-    }
+  document.documentElement.classList.add('blog-header-loading', 'blog-page-loading');
+
+  (function initBlogPageHeader(){
+    function init() {
+      const stickyHeader = document.querySelector('.blog-sticky-header');
+      const blogTitle = stickyHeader ? stickyHeader.querySelector('.text-block') : null;
+      const titleText = blogTitle ? blogTitle.querySelector('p') : null;
+      const categoryNav = stickyHeader ? stickyHeader.querySelector('.blog-category-nav') : null;
+      const blogLogo = document.querySelector('.blog-logo-link');
+      
+      if (!stickyHeader || !blogTitle || !titleText) {
+        console.log('Sticky header or blog title not found');
+        return;
+      }
     
     // Try multiple selectors to find the Shopify header
     let header = document.querySelector('#shopify-section-header');
@@ -129,8 +131,32 @@
       
     }
     
-    // Initial check
-    handleScroll();
+      function markHeaderReady() {
+        document.documentElement.classList.remove('blog-header-loading');
+        document.documentElement.classList.add('blog-header-ready');
+        document.documentElement.classList.remove('blog-page-loading');
+        document.documentElement.classList.add('blog-page-ready');
+      }
+      // Fallback in case something prevents ready
+      setTimeout(markHeaderReady, 1000);
+
+      // Initial check
+      handleScroll();
+      requestAnimationFrame(function(){
+        handleScroll();
+        markHeaderReady();
+      });
+      
+      // Ensure title/layout updates when navigating back via browser history (bfcache)
+      window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+          handleScroll();
+          requestAnimationFrame(function(){
+            handleScroll();
+            markHeaderReady();
+          });
+        }
+      });
     
     // Listen to scroll events with throttling for performance
     let ticking = false;
@@ -144,8 +170,8 @@
       }
     });
 
-    // --- Featured article slider for the first row -----------------------
-    function initFeaturedSlider() {
+      // --- Featured article slider for the first row -----------------------
+      function initFeaturedSlider() {
       const grid = document.querySelector('.blog-posts-container--above-banners') || document.querySelector('.blog-posts-container--above-banner');
       const featuredItem = document.querySelector('.blog-posts-container--above-banner .blog-post-item.featured-article');
       if (!featuredItem || !grid) return;
@@ -243,12 +269,19 @@
       nextBtn.addEventListener('click', function(ev){ ev.preventDefault(); go(1); });
     }
 
-    // kick off slider after a tick so DOM is ready
-    requestAnimationFrame(initWithCatch);
-    function initWithCatch(){
-      try { initFeaturedSlider(); } catch(e) { console && console.warn('Feature slider init error', e); }
+      // kick off slider after a tick so DOM is ready
+      requestAnimationFrame(initWithCatch);
+      function initWithCatch(){
+        try { initFeaturedSlider(); } catch(e) { console && console.warn('Feature slider init error', e); }
+      }
     }
-  });
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
 </script>
 
 <blog-posts-list section-id="{{ section.id }}" class="blog-page-wrapper">
@@ -279,6 +312,15 @@
           <span class="blog-logo-fallback">ব</span>
         {%- endif -%}
       </a>
+      
+      {%- comment -%} Main navigation buttons (left side with logo) {%- endcomment -%}
+      <div class="blog-main-nav">
+        <a href="{{ routes.root_url }}" class="blog-nav-btn">Home</a>
+        <a href="/collections" class="blog-nav-btn">Catalog</a>
+        <a href="{{ blog.url }}" class="blog-nav-btn active">Articles</a>
+        <a href="/pages/contact" class="blog-nav-btn">Contact</a>
+      </div>
+      
       {%- comment -%} Category navigation buttons {%- endcomment -%}
       <div class="blog-category-nav">
         {%- liquid
@@ -467,6 +509,27 @@
     background-color: #d9d9d9 !important;
   }
 
+  /* Prevent flash on load/back nav */
+  .blog-header-loading .blog-sticky-header {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .blog-header-ready .blog-sticky-header {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease;
+  }
+
+  .blog-page-loading .blog-page-wrapper {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .blog-page-ready .blog-page-wrapper {
+    opacity: 1;
+    transition: opacity 0.25s ease;
+  }
+
   /* Sticky header wrapper for title and buttons */
   .blog-sticky-header {
     position: sticky !important;
@@ -530,7 +593,7 @@
     pointer-events: auto; /* re-enable clicks for buttons */
   }
 
-  /* Custom blog header logo (left side, same line as tags) - fixed on desktop */
+  /* Custom blog header logo (left side, same line as nav) - fixed on desktop */
   .blog-logo-link {
     position: absolute;
     top: 1rem; /* fixed position, same as buttons */
@@ -559,6 +622,55 @@
     border-radius: 50%;
     background-color: #000;
     color: #fff;
+  }
+
+  /* Main navigation buttons (left side, next to logo) */
+  .blog-main-nav {
+    position: absolute;
+    top: 1rem; /* fixed position, aligned with logo */
+    left: 4.5rem; /* positioned after logo with reduced gap */
+    z-index: 2;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0;
+    flex-wrap: wrap;
+    pointer-events: auto; /* re-enable clicks for buttons */
+  }
+
+  .blog-nav-btn {
+    display: inline-block;
+    padding: 0.2rem 0.7rem; /* fixed compact size, same as category buttons */
+    background-color: #f0f0f0;
+    color: #777;
+    text-decoration: none;
+    border-radius: 9999px;
+    font-size: 0.75rem; /* fixed compact size */
+    font-weight: 300;
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.01em;
+    transition: all 0.2s ease;
+    border: 1px solid #d0d0d0;
+    box-shadow: 
+      0.5px 0.5px 3px rgba(0, 0, 0, 0.1),
+      -1px -1px 3px rgba(255, 255, 255, 0.8);
+  }
+
+  .blog-nav-btn:hover {
+    background-color: #e8e8e8;
+    color: #666;
+    transform: translateY(-1px);
+  }
+
+  .blog-nav-btn.active {
+    background-color: #333;
+    color: #fff;
+    font-weight: 500;
+    box-shadow: 
+      inset 1px 1px 3px rgba(0, 0, 0, 0.4),
+      inset -1px -1px 2px rgba(255, 255, 255, 0.1);
   }
 
   .blog-category-btn {
@@ -597,7 +709,8 @@
   }
 
   @media screen and (max-width: 749px) {
-    /* Hide category tag buttons on mobile (user request). Desktop unaffected. */
+    /* Hide main navigation and category tag buttons on mobile (user request). Desktop unaffected. */
+    .blog-main-nav,
     .blog-category-nav,
     .blog-sticky-header.scrolled .blog-category-nav {
       display: none !important;
