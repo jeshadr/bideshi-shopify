@@ -1,0 +1,230 @@
+/**
+ * Article Tooltips - Wikipedia-style hover tooltips for blog articles
+ * 
+ * Usage in Shopify article editor (HTML mode):
+ * <span class="article-tooltip" data-tooltip="Your brief explanation here">word or phrase</span>
+ */
+
+class ArticleTooltips extends HTMLElement {
+  constructor() {
+    super();
+    this.tooltips = [];
+    this.currentTooltip = null;
+    this.hideTimeout = null;
+  }
+
+  connectedCallback() {
+    this.init();
+  }
+
+  init() {
+    // Find all elements with tooltip data in the page scope
+    const root = document.querySelector('.blog-post-content') || document;
+    const tooltipElements = root.querySelectorAll('[data-tooltip]');
+    
+    tooltipElements.forEach(element => {
+      this.setupTooltip(element);
+    });
+
+    // Set up mutation observer to detect new tooltips
+    this.setupMutationObserver(root);
+  }
+
+  setupMutationObserver(root) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              // Check if the added node has tooltip data
+              if (node.hasAttribute && node.hasAttribute('data-tooltip')) {
+                this.setupTooltip(node);
+              }
+              // Check if the added node contains tooltips
+              const tooltips = node.querySelectorAll && node.querySelectorAll('[data-tooltip]');
+              if (tooltips) {
+                tooltips.forEach(tooltip => this.setupTooltip(tooltip));
+              }
+            }
+          });
+        }
+      });
+    });
+
+    // Observe changes within the root element
+    observer.observe(root, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  setupTooltip(element) {
+    // Skip if already set up
+    if (element.classList.contains('has-tooltip')) {
+      return;
+    }
+
+    // Add a class for styling
+    element.classList.add('has-tooltip');
+    
+    // Create tooltip element with optional image
+    const tooltip = this.createTooltipElement(
+      element.dataset.tooltip,
+      element.dataset.tooltipImage
+    );
+    
+    // Mouse events
+    element.addEventListener('mouseenter', (e) => {
+      this.showTooltip(tooltip, element);
+    });
+
+    element.addEventListener('mouseleave', (e) => {
+      this.scheduleHideTooltip(tooltip);
+    });
+
+    // Touch events for mobile
+    element.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (this.currentTooltip === tooltip && tooltip.classList.contains('visible')) {
+        this.hideTooltip(tooltip);
+      } else {
+        this.showTooltip(tooltip, element);
+      }
+    }, { passive: false });
+
+    // Keep tooltip visible when hovering over it
+    tooltip.addEventListener('mouseenter', () => {
+      this.cancelHideTooltip();
+    });
+
+    tooltip.addEventListener('mouseleave', () => {
+      this.hideTooltip(tooltip);
+    });
+
+    this.tooltips.push({ element, tooltip });
+  }
+
+  createTooltipElement(content, imageUrl) {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'article-tooltip-popup';
+    
+    // Build tooltip content with optional image
+    let tooltipContent = '';
+    if (imageUrl) {
+      tooltipContent = `
+        <div class="article-tooltip-content">
+          <img src="${imageUrl}" alt="Tooltip image" class="tooltip-image" loading="lazy">
+          <div class="tooltip-text">${content}</div>
+        </div>
+      `;
+    } else {
+      tooltipContent = `
+        <div class="article-tooltip-content">
+          ${content}
+        </div>
+      `;
+    }
+    
+    tooltip.innerHTML = tooltipContent;
+    document.body.appendChild(tooltip);
+    return tooltip;
+  }
+
+  showTooltip(tooltip, triggerElement) {
+    // Hide any currently visible tooltip
+    if (this.currentTooltip && this.currentTooltip !== tooltip) {
+      this.hideTooltip(this.currentTooltip);
+    }
+
+    this.cancelHideTooltip();
+    
+    // Position the tooltip
+    this.positionTooltip(tooltip, triggerElement);
+    
+    // Show with a slight delay for smoother UX
+    setTimeout(() => {
+      tooltip.classList.add('visible');
+      this.currentTooltip = tooltip;
+    }, 100);
+  }
+
+  scheduleHideTooltip(tooltip) {
+    this.hideTimeout = setTimeout(() => {
+      this.hideTooltip(tooltip);
+    }, 200);
+  }
+
+  cancelHideTooltip() {
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+      this.hideTimeout = null;
+    }
+  }
+
+  hideTooltip(tooltip) {
+    tooltip.classList.remove('visible');
+    if (this.currentTooltip === tooltip) {
+      this.currentTooltip = null;
+    }
+  }
+
+  positionTooltip(tooltip, triggerElement) {
+    const triggerRect = triggerElement.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const scrollY = window.scrollY;
+    const scrollX = window.scrollX;
+
+    // Default position: above the element, centered
+    let top = triggerRect.top + scrollY - tooltipRect.height - 10;
+    let left = triggerRect.left + scrollX + (triggerRect.width / 2) - (tooltipRect.width / 2);
+
+    // Check if tooltip goes off the top of the screen
+    if (top < scrollY + 10) {
+      // Position below the element instead
+      top = triggerRect.bottom + scrollY + 10;
+      tooltip.classList.add('below');
+    } else {
+      tooltip.classList.remove('below');
+    }
+
+    // Check if tooltip goes off the right side
+    if (left + tooltipRect.width > scrollX + viewportWidth - 20) {
+      left = scrollX + viewportWidth - tooltipRect.width - 20;
+    }
+
+    // Check if tooltip goes off the left side
+    if (left < scrollX + 20) {
+      left = scrollX + 20;
+    }
+
+    tooltip.style.top = `${top}px`;
+    tooltip.style.left = `${left}px`;
+  }
+
+  disconnectedCallback() {
+    // Cleanup: remove all tooltip elements
+    this.tooltips.forEach(({ tooltip }) => {
+      tooltip.remove();
+    });
+  }
+}
+
+customElements.define('article-tooltips', ArticleTooltips);
+
+// Fallback initialization for cases where the custom element might not be properly set up
+document.addEventListener('DOMContentLoaded', () => {
+  // Wait a bit for the syntax processor to run
+  setTimeout(() => {
+    const existingTooltips = document.querySelectorAll('[data-tooltip]:not(.has-tooltip)');
+    if (existingTooltips.length > 0) {
+      // Create a temporary instance to handle existing tooltips
+      const tempInstance = new ArticleTooltips();
+      existingTooltips.forEach(element => {
+        tempInstance.setupTooltip(element);
+      });
+    }
+  }, 100);
+});
+
