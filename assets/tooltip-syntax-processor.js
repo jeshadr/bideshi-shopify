@@ -31,7 +31,7 @@ class TooltipSyntaxProcessor {
   }
 
   revealContent() {
-    const contentElements = document.querySelectorAll('.blog-post-content.processing-tooltips');
+    const contentElements = document.querySelectorAll('.blog-post-content.processing-tooltips, .article-content.processing-tooltips');
     contentElements.forEach(element => {
       element.classList.remove('processing-tooltips');
       element.classList.add('tooltips-ready');
@@ -39,7 +39,7 @@ class TooltipSyntaxProcessor {
   }
 
   processContent() {
-    const contentElements = document.querySelectorAll('.blog-post-content, .rte, article');
+    const contentElements = document.querySelectorAll('.blog-post-content, .article-content, .rte, article');
     
     contentElements.forEach(element => {
       this.processElement(element);

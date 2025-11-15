@@ -19,7 +19,7 @@ class ArticleTooltips extends HTMLElement {
 
   init() {
     // Find all elements with tooltip data in the page scope
-    const root = document.querySelector('.blog-post-content') || document;
+    const root = document.querySelector('.blog-post-content') || document.querySelector('.article-content') || document;
     const tooltipElements = root.querySelectorAll('[data-tooltip]');
     
     tooltipElements.forEach(element => {
