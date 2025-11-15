@@ -403,7 +403,7 @@
     font-size: 14px;
     line-height: 1.6;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* Tooltip header with icon and title */
@@ -455,24 +455,45 @@
   .article-tooltip-content::before {
     content: '';
     position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 7px solid #ede3c9;
+    z-index: 1;
+  }
+
+  /* Subtle shadow for arrow */
+  .article-tooltip-content::after {
+    content: '';
+    position: absolute;
     bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #ede3c9;
-    filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.1));
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 7px solid rgba(0, 0, 0, 0.1);
+    z-index: 0;
   }
 
   /* Arrow flips when tooltip is below */
   .article-tooltip-popup.below .article-tooltip-content::before {
     bottom: auto;
+    top: -7px;
+    border-top: none;
+    border-bottom: 7px solid #ede3c9;
+  }
+
+  .article-tooltip-popup.below .article-tooltip-content::after {
+    bottom: auto;
     top: -8px;
     border-top: none;
-    border-bottom: 10px solid #ede3c9;
-    filter: drop-shadow(0 -3px 2px rgba(0, 0, 0, 0.1));
+    border-bottom: 7px solid rgba(0, 0, 0, 0.1);
   }
 
   /* Link styling inside tooltips */
