@@ -14,7 +14,10 @@
       >
     {%- endif -%}
 
-    {% comment %} This a way to wait for main content to load when navigating to a new page so that the view transitions can work consistently {% endcomment %}
+    {%- comment -%}
+      This is a way to wait for main content to load when navigating to a new
+      page so that the view transitions can work consistently
+    {%- endcomment -%}
     <link
       rel="expect"
       href="#MainContent"
@@ -37,6 +40,7 @@
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
+
     <div id="header-group">
       {% sections 'header-group' %}
     </div>
@@ -65,6 +69,12 @@
 
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
+    {% endif %}
+
+    {%- comment -%} Load footnotes only on blog article pages {%- endcomment -%}
+    {% if template.name == 'article' %}
+      {{ 'footnotes.css' | asset_url | stylesheet_tag }}
+      {{ 'footnotes.js' | asset_url | script_tag }}
     {% endif %}
   </body>
 </html>
