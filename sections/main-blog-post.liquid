@@ -205,7 +205,7 @@
 
   /* Blog Title (THE BIDESHI TIMES) */
   .article-blog-title {
-    font-family: 'Playfair Display', 'Georgia', serif;
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
     font-size: clamp(2rem, 5vw, 7rem);
     font-weight: 50;
     text-transform: uppercase;
@@ -242,7 +242,7 @@
     gap: 2rem;
     margin: 0.5rem 0;
     padding: 0.25rem 0;
-    font-family: 'Georgia', serif;
+    font-family: 'ZTFormom', 'Georgia', serif;
     font-size: 0.875rem;
     font-style: italic;
     color: #333;
@@ -298,7 +298,7 @@
   }
 
   .article-image-title-overlay h2 {
-    font-family: 'Playfair Display', 'Georgia', serif;
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
     font-size: 2.5rem;
     font-weight: 700;
     color: #ffffff;
@@ -312,10 +312,20 @@
   /* Article Content */
   .article-content {
     margin: 3rem 0;
-    font-family: 'Georgia', serif;
+    font-family: 'ZTFormom', 'Georgia', serif !important;
     font-size: 1.125rem;
     line-height: 1.8;
     color: #333;
+  }
+
+  .article-content *,
+  .article-content p,
+  .article-content div,
+  .article-content span,
+  .article-content li,
+  .article-content ul,
+  .article-content ol {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
   }
 
   .article-content h1,
@@ -324,7 +334,7 @@
   .article-content h4,
   .article-content h5,
   .article-content h6 {
-    font-family: 'Playfair Display', 'Georgia', serif;
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif !important;
     font-weight: 700;
     margin-top: 2rem;
     margin-bottom: 1rem;
@@ -333,6 +343,17 @@
 
   .article-content p {
     margin-bottom: 1.5rem;
+  }
+
+  /* Override .rte class font-family */
+  .article-content.rte,
+  .article-content .rte {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+  }
+
+  .article-content.rte *,
+  .article-content .rte * {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
   }
 
   .article-content a {
@@ -422,7 +443,7 @@
   }
 
   .tooltip-title {
-    font-family: 'Georgia', serif;
+    font-family: 'ZTFormom', 'Georgia', serif;
     font-size: 16px;
     font-weight: 600;
     font-style: italic;
@@ -445,7 +466,7 @@
 
   .tooltip-text {
     padding: 10px 14px 14px 14px;
-    font-family: 'Georgia', serif;
+    font-family: 'ZTFormom', 'Georgia', serif;
     font-size: 13px;
     line-height: 1.5;
     color: #000000;
@@ -514,7 +535,7 @@
   }
 
   .article-comments-heading {
-    font-family: 'Playfair Display', 'Georgia', serif;
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 2rem;
