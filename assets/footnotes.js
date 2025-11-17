@@ -49,22 +49,39 @@
       collected.forEach(el => refContainer.appendChild(el));
       refStart.insertAdjacentElement('afterend', refContainer);
   
-      // Create toggle button
-      const toggle = document.createElement('button');
+      // Create toggle text
+      const toggle = document.createElement('span');
       toggle.className = 'fn-toggle';
-      toggle.textContent = 'Show References ▾';
+      toggle.innerHTML = 'References <span class="fn-arrow">▾</span>';
       refStart.style.fontWeight = '700';
       refStart.insertAdjacentElement('afterend', toggle);
   
       // --- Start collapsed by default ---
       let expanded = false;
       refContainer.style.display = 'none';
-  
+      refContainer.classList.remove('fn-collapsible-open');
+
+      // Function to expand references section
+      function expandReferences() {
+        if (!expanded) {
+          expanded = true;
+          refContainer.style.display = 'block';
+          refContainer.classList.add('fn-collapsible-open');
+          toggle.innerHTML = 'References <span class="fn-arrow">▴</span>';
+        }
+      }
+
       // Toggle open/close on click
       toggle.addEventListener('click', () => {
         expanded = !expanded;
-        refContainer.style.display = expanded ? 'block' : 'none';
-        toggle.textContent = expanded ? 'Hide References ▴' : 'Show References ▾';
+        if (expanded) {
+          refContainer.style.display = 'block';
+          refContainer.classList.add('fn-collapsible-open');
+        } else {
+          refContainer.style.display = 'none';
+          refContainer.classList.remove('fn-collapsible-open');
+        }
+        toggle.innerHTML = expanded ? 'References <span class="fn-arrow">▴</span>' : 'References <span class="fn-arrow">▾</span>';
       });
   
       // 2) Collect bottom references into a map: { "1": {node, html} }
@@ -132,12 +149,29 @@
             frag.appendChild(document.createTextNode(text.slice(last, idx)));
             if (fnMap.has(num)) {
               const a = document.createElement('a');
-              a.href = `#fn-${num}`;
+              a.href = '#';  // Use # instead of #fn-{num} to prevent hash in URL
               a.className = 'fn-ref';
               a.dataset.fn = num;
               const sup = document.createElement('sup');
               sup.textContent = `[${num}]`;
               a.appendChild(sup);
+              // Add click handler to expand references and scroll
+              a.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                expandReferences();
+                // Small delay to ensure element is visible before scrolling
+                setTimeout(() => {
+                  const target = document.getElementById(`fn-${num}`);
+                  if (target) {
+                    target.scrollIntoView({behavior:'smooth', block:'start'});
+                    // Remove hash from URL if it was added
+                    if (window.location.hash) {
+                      history.replaceState(null, '', window.location.pathname + window.location.search);
+                    }
+                  }
+                }, 50);
+              });
               frag.appendChild(a);
             } else {
               frag.appendChild(document.createTextNode(m[0]));

@@ -4,11 +4,41 @@
     width: 100%;
   }
 
-  .inline-media img,
+  /* Images with border around entire figure */
+  .inline-media--image {
+    border: 2px solid #000;
+    padding: 12px 12px 12px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: #d9d9d9;
+    margin: 0;
+  }
+
+  .inline-media--image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: none;
+    margin: 0;
+    padding: 0;
+    vertical-align: bottom;
+  }
+
+  .inline-media--image figcaption {
+    font-size: 0.875rem;
+    font-family: 'Georgia', serif;
+    color: #000;
+    margin: 0;
+    padding: 12px 12px 0 12px;
+    text-align: center;
+    font-style: normal;
+    line-height: 1.4;
+    background: transparent;
+  }
+
   .inline-media video {
     width: 100%;
     height: auto;
-    border-radius: var(--style-border-radius-lg, 8px);
+    border: 2px solid rgba(0, 0, 0, 0.15);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
@@ -17,19 +47,64 @@
     margin-top: 0.5rem;
   }
 
+  /* Video embeds - always centered, no layout options */
+  .inline-media--embed {
+    width: 100%;
+    max-width: 800px;
+    margin: 2rem auto;
+    clear: both;
+  }
+
   .inline-media--embed iframe {
     width: 100%;
     aspect-ratio: 16 / 9;
-    border-radius: var(--style-border-radius-lg, 8px);
+    border: 2px solid rgba(0, 0, 0, 0.15);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
   .inline-media figcaption {
     font-size: 0.875rem;
-    color: rgb(var(--color-foreground-rgb) / 0.6);
-    margin-top: 0.5rem;
+    font-family: 'Georgia', serif;
+    color: #000;
+    margin-top: 0.75rem;
     text-align: center;
-    font-style: italic;
+    font-style: normal;
+    line-height: 1.4;
+    padding: 0 0.5rem;
+  }
+
+  /* Full-width layout (default) */
+  .inline-media--full {
+    width: 80%;
+    max-width: 800px;
+    margin: 2rem auto;
+    clear: both;
+  }
+
+  /* Float right layout - text wraps on left */
+  .inline-media--float-right {
+    float: right;
+    width: 35%;
+    max-width: 400px;
+    margin: 0 0 1.5rem 2rem;
+    clear: right;
+  }
+
+  /* Float left layout - text wraps on right */
+  .inline-media--float-left {
+    float: left;
+    width: 35%;
+    max-width: 400px;
+    margin: 0 2rem 1.5rem 0;
+    clear: left;
+  }
+
+  /* Center layout - centered with limited width */
+  .inline-media--center {
+    width: 50%;
+    max-width: 500px;
+    margin: 2rem auto;
+    clear: both;
   }
 
   /* Responsive adjustments */
@@ -37,5 +112,34 @@
     .inline-media {
       margin: 1.5rem 0;
     }
+
+    /* Reduce padding on mobile */
+    .inline-media--image {
+      padding: 0 0 8px 0;
+    }
+
+    .inline-media--image figcaption {
+      padding: 8px 8px 0 8px;
+      font-size: 0.8125rem;
+    }
+
+    /* On mobile, all layouts become full-width */
+    .inline-media--float-right,
+    .inline-media--float-left,
+    .inline-media--center {
+      float: none;
+      width: 100%;
+      max-width: 100%;
+      margin: 1.5rem 0;
+    }
+  }
+
+  /* Clear floats after content */
+  .article-content::after,
+  .blog-post-content::after,
+  .rte::after {
+    content: '';
+    display: table;
+    clear: both;
   }
 </style>
