@@ -14,16 +14,114 @@
   assign media_video_links = article.metafields.custom.media_video_link.value
 -%}
 
-{%- comment -%} Process Images {%- endcomment -%}
+{%- comment -%} Process Direct Image Links: [image:URL|layout|caption] {%- endcomment -%}
+{%- if processed_content contains '[image:' -%}
+  {%- comment -%} Process up to 50 image links (should be enough for any article) {%- endcomment -%}
+  {%- for i in (1..50) -%}
+    {%- if processed_content contains '[image:' -%}
+      {%- liquid
+        # Find the first [image: pattern
+        assign before_pattern = processed_content | split: '[image:' | first
+        assign after_pattern = processed_content | split: '[image:' | last
+        
+        # Extract content up to the closing bracket
+        assign url_and_options = after_pattern | split: ']' | first
+      -%}
+      
+      {%- if url_and_options != after_pattern -%}
+        {%- liquid
+          assign parts = url_and_options | split: '|'
+          assign image_url = parts[0] | strip
+          
+          # Default values
+          assign layout = 'full'
+          assign caption = ''
+          
+          # Parse layout and caption if provided
+          if parts.size > 1
+            assign layout = parts[1] | strip
+            if layout == 'right' or layout == 'float-right'
+              assign layout = 'float-right'
+            elsif layout == 'left' or layout == 'float-left'
+              assign layout = 'float-left'
+            endif
+          endif
+          
+          if parts.size > 2
+            assign caption = parts[2] | strip
+          endif
+          
+          assign original_shortcode = '[image:' | append: url_and_options | append: ']'
+        -%}
+        
+        {%- capture image_html -%}
+          <figure class="inline-media inline-media--image inline-media--{{ layout }}">
+            <img
+              src="{{ image_url }}"
+              alt="{{ caption | default: article.title }}"
+              loading="lazy"
+              style="max-width: 100%; height: auto;"
+            >
+            {%- if caption != '' -%}
+              <figcaption>{{ caption }}</figcaption>
+            {%- endif -%}
+          </figure>
+        {%- endcapture -%}
+        
+        {%- liquid
+          # Replace the shortcode
+          assign processed_content = processed_content | replace: original_shortcode, image_html
+        -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%} Process Images with layout options {%- endcomment -%}
 {%- if media_images -%}
   {%- for image in media_images -%}
     {%- liquid
       assign index = forloop.index
-      assign shortcode = '[media-image-' | append: index | append: ']'
+      assign base_shortcode = '[media-image-' | append: index
+      
+      # Search for enhanced shortcode with options: [media-image-1|layout|caption]
+      assign search_pattern = base_shortcode | append: '|'
+      assign search_pos = processed_content | split: search_pattern | first | size
+      
+      # Default values
+      assign layout = 'full'
+      assign caption = ''
+      
+      # Check if enhanced shortcode exists
+      if processed_content contains search_pattern
+        assign after_marker = processed_content | split: search_pattern | last
+        assign shortcode_end = after_marker | split: ']' | first
+        assign parts = shortcode_end | split: '|'
+        
+        if parts.size > 0
+          assign layout = parts[0] | strip
+          # Convert shorthand to full class names (backward compatible)
+          if layout == 'right' or layout == 'float-right'
+            assign layout = 'float-right'
+          elsif layout == 'left' or layout == 'float-left'
+            assign layout = 'float-left'
+          endif
+        endif
+        
+        if parts.size > 1
+          assign caption = parts[1] | strip
+        endif
+        
+        assign shortcode = base_shortcode | append: '|' | append: shortcode_end | append: ']'
+      else
+        assign shortcode = base_shortcode | append: ']'
+      endif
     -%}
     
     {%- capture image_html -%}
-      <figure class="inline-media inline-media--image">
+      <figure class="inline-media inline-media--image inline-media--{{ layout }}">
         <img
           src="{{ image | image_url: width: 1200 }}"
           srcset="
@@ -32,12 +130,15 @@
             {{ image | image_url: width: 1200 }} 1200w,
             {{ image | image_url: width: 1600 }} 1600w
           "
-          sizes="(min-width: 750px) calc(100vw - 10rem), calc(100vw - 3rem)"
-          alt="{{ image.alt | default: article.title }}"
+          sizes="{% if layout == 'float-left' or layout == 'float-right' or layout == 'left' or layout == 'right' %}(min-width: 750px) 400px, 100vw{% else %}(min-width: 750px) calc(100vw - 10rem), calc(100vw - 3rem){% endif %}"
+          alt="{{ image.alt | default: caption | default: article.title }}"
           loading="lazy"
           width="{{ image.width }}"
           height="{{ image.height }}"
         >
+        {%- if caption != '' -%}
+          <figcaption>{{ caption }}</figcaption>
+        {%- endif -%}
       </figure>
     {%- endcapture -%}
     
@@ -84,26 +185,180 @@
   {%- endfor -%}
 {%- endif -%}
 
-{%- comment -%} Process Video Links (YouTube/Vimeo) {%- endcomment -%}
+{%- comment -%} Process Direct Video Links: [video:URL|caption] {%- endcomment -%}
+{%- if processed_content contains '[video:' -%}
+  {%- comment -%} Process up to 50 video links {%- endcomment -%}
+  {%- for i in (1..50) -%}
+    {%- if processed_content contains '[video:' -%}
+      {%- liquid
+        # Find the first [video: pattern
+        assign before_pattern = processed_content | split: '[video:' | first
+        assign after_pattern = processed_content | split: '[video:' | last
+        
+        # Extract content up to the closing bracket
+        assign url_and_options = after_pattern | split: ']' | first
+      -%}
+      
+      {%- if url_and_options != after_pattern -%}
+        {%- liquid
+          assign parts = url_and_options | split: '|'
+          assign video_url = parts[0] | strip
+          
+          # Default values
+          assign caption = ''
+          assign is_tiktok = false
+          assign embed_link = video_url
+          
+          # Parse caption if provided
+          if parts.size > 1
+            assign caption = parts[1] | strip
+          endif
+          
+          # Detect and convert TikTok URLs
+          if video_url contains 'tiktok.com'
+            assign is_tiktok = true
+            # Extract video ID from TikTok URL
+            # Format: https://www.tiktok.com/@username/video/1234567890123456789
+            if video_url contains '/video/'
+              assign tiktok_parts = video_url | split: '/video/'
+              if tiktok_parts.size > 1
+                assign video_id_part = tiktok_parts[1] | split: '?' | first | split: '&' | first | split: '/' | first | strip
+                assign embed_link = 'https://www.tiktok.com/embed/v2/' | append: video_id_part
+              endif
+            endif
+          # Convert YouTube URLs to embed format
+          elsif video_url contains 'youtube.com' or video_url contains 'youtu.be'
+            # Handle youtube.com/watch?v=VIDEO_ID
+            if video_url contains 'watch?v='
+              assign youtube_id = video_url | split: 'watch?v=' | last | split: '&' | first | split: '?' | first | strip
+              assign embed_link = 'https://www.youtube.com/embed/' | append: youtube_id
+            # Handle youtu.be/VIDEO_ID
+            elsif video_url contains 'youtu.be/'
+              assign youtube_id = video_url | split: 'youtu.be/' | last | split: '?' | first | split: '&' | first | split: '/' | first | strip
+              assign embed_link = 'https://www.youtube.com/embed/' | append: youtube_id
+            # Handle youtube.com/embed/ (already in embed format)
+            elsif video_url contains 'youtube.com/embed/'
+              assign embed_link = video_url
+            endif
+          endif
+          
+          # Reconstruct the original shortcode for replacement
+          assign original_shortcode = '[video:' | append: url_and_options | append: ']'
+        -%}
+        
+        {%- capture video_html -%}
+          <figure class="inline-media inline-media--embed">
+            {%- if is_tiktok -%}
+              <iframe
+                src="{{ embed_link }}"
+                frameborder="0"
+                allow="encrypted-media"
+                allowfullscreen
+                loading="lazy"
+                style="width: 100%; max-width: 325px; height: 580px; margin: 0 auto; display: block; border-radius: 20px; overflow: hidden;"
+              ></iframe>
+            {%- else -%}
+              <iframe
+                src="{{ embed_link }}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+            {%- endif -%}
+            {%- if caption != '' -%}
+              <figcaption>{{ caption }}</figcaption>
+            {%- endif -%}
+          </figure>
+        {%- endcapture -%}
+        
+        {%- liquid
+          # Replace the shortcode
+          assign processed_content = processed_content | replace: original_shortcode, video_html
+        -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%} Process Video Links (YouTube/Vimeo) from metafields - no layout options {%- endcomment -%}
 {%- if media_video_links -%}
   {%- for link in media_video_links -%}
     {%- liquid
       assign index = forloop.index
-      assign shortcode = '[media-link-' | append: index | append: ']'
+      assign base_shortcode = '[media-link-' | append: index
       
-      # Convert YouTube/Vimeo URLs to embed format
-      assign embed_link = link | replace: 'watch?v=', 'embed/' | replace: 'youtu.be/', 'youtube.com/embed/' | replace: '&list', '?list'
+      # Check if shortcode has caption (no layout options)
+      assign search_pattern = base_shortcode | append: '|'
+      assign caption = ''
+      
+      if processed_content contains search_pattern
+        assign after_marker = processed_content | split: search_pattern | last
+        assign shortcode_end = after_marker | split: ']' | first
+        assign caption = shortcode_end | strip
+        assign shortcode = base_shortcode | append: '|' | append: shortcode_end | append: ']'
+      else
+        assign shortcode = base_shortcode | append: ']'
+      endif
+      
+      # Detect and convert TikTok/YouTube URLs to embed format
+      assign is_tiktok = false
+      assign embed_link = link
+      
+      # Detect and convert TikTok URLs
+      if link contains 'tiktok.com'
+        assign is_tiktok = true
+        # Extract video ID from TikTok URL
+        # Format: https://www.tiktok.com/@username/video/1234567890123456789
+        if link contains '/video/'
+          assign tiktok_parts = link | split: '/video/'
+          if tiktok_parts.size > 1
+            assign video_id_part = tiktok_parts[1] | split: '?' | first | split: '&' | first | split: '/' | first | strip
+            assign embed_link = 'https://www.tiktok.com/embed/v2/' | append: video_id_part
+          endif
+        endif
+      # Convert YouTube URLs to embed format
+      elsif link contains 'youtube.com' or link contains 'youtu.be'
+        # Handle youtube.com/watch?v=VIDEO_ID
+        if link contains 'watch?v='
+          assign youtube_id = link | split: 'watch?v=' | last | split: '&' | first | split: '?' | first | strip
+          assign embed_link = 'https://www.youtube.com/embed/' | append: youtube_id
+        # Handle youtu.be/VIDEO_ID
+        elsif link contains 'youtu.be/'
+          assign youtube_id = link | split: 'youtu.be/' | last | split: '?' | first | split: '&' | first | split: '/' | first | strip
+          assign embed_link = 'https://www.youtube.com/embed/' | append: youtube_id
+        # Handle youtube.com/embed/ (already in embed format)
+        elsif link contains 'youtube.com/embed/'
+          assign embed_link = link
+        endif
+      endif
     -%}
     
     {%- capture link_html -%}
       <figure class="inline-media inline-media--embed">
-        <iframe
-          src="{{ embed_link }}"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
+        {%- if is_tiktok -%}
+          <iframe
+            src="{{ embed_link }}"
+            frameborder="0"
+            allow="encrypted-media"
+            allowfullscreen
+            loading="lazy"
+            style="width: 100%; max-width: 325px; height: 580px; margin: 0 auto; display: block; border-radius: 12px; overflow: hidden;"
+          ></iframe>
+        {%- else -%}
+          <iframe
+            src="{{ embed_link }}"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        {%- endif -%}
+        {%- if caption != '' -%}
+          <figcaption>{{ caption }}</figcaption>
+        {%- endif -%}
       </figure>
     {%- endcapture -%}
     
