@@ -24,6 +24,7 @@
       const stickyHeader = document.querySelector('.blog-sticky-header');
       const blogTitle = stickyHeader ? stickyHeader.querySelector('.text-block') : null;
       const titleText = blogTitle ? blogTitle.querySelector('p') : null;
+      const subtitle = stickyHeader ? stickyHeader.querySelector('.text-block[class*="__subtitle"]') : null;
       const categoryNav = stickyHeader ? stickyHeader.querySelector('.blog-category-nav') : null;
       const blogLogo = document.querySelector('.blog-logo-link');
       
@@ -128,6 +129,20 @@
       // Gradient height should only cover the compact header area (title at 1rem + some buffer)
       // Fixed height in pixels to match compact header size
       stickyHeader.style.setProperty('--gradient-height', '120px');
+      
+      // Fade out subtitle as user scrolls
+      if (subtitle) {
+        const subtitleFadeEnd = scrollEnd * 0.6; // Fade out by 60% of scroll
+        let subtitleOpacity = 1;
+        
+        if (scrollY >= subtitleFadeEnd) {
+          subtitleOpacity = 0;
+        } else if (scrollY > scrollStart) {
+          subtitleOpacity = 1 - (scrollY / subtitleFadeEnd);
+        }
+        
+        subtitle.style.opacity = String(subtitleOpacity);
+      }
       
     }
     
@@ -696,7 +711,7 @@
     background-color: #e8e8e8;
     color: #666;
     transform: translateY(-1px);
-    box-shadow: 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   .blog-category-btn.active {
@@ -805,7 +820,25 @@
     transition: font-size 0.1s ease-out !important;
   }
 
-  
+  /* Subtitle - make it small and position directly under title */
+  .blog-sticky-header .text-block[class*="__subtitle"] {
+    padding-top: 0 !important;
+    padding-bottom: 9rem !important;
+    margin-top: -8.5rem !important;
+    transition: opacity 0.3s ease-out !important;
+  }
+
+  .blog-sticky-header .text-block[class*="__subtitle"] p {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: none !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #2c2c2c !important;
+  }
 
   @media screen and (max-width: 749px) {
     /* Reduce top/bottom padding for title on mobile - add space for logo */
@@ -817,11 +850,21 @@
       font-size: clamp(1.2rem, var(--blog-title-vw, 7vw), 3.5rem) !important;
       letter-spacing: 0.08em !important;
     }
+
+    /* Smaller subtitle on mobile */
+    .blog-sticky-header .text-block[class*="__subtitle"] p {
+      font-size: 0.75rem !important;
+    }
   }
 
   @media screen and (max-width: 1024px) and (min-width: 750px) {
     .blog-sticky-header .text-block p {
       font-size: clamp(2rem, var(--blog-title-vw, 7vw), 7rem) !important;
+    }
+
+    /* Tablet subtitle sizing */
+    .blog-sticky-header .text-block[class*="__subtitle"] p {
+      font-size: 0.85rem !important;
     }
   }
 
@@ -999,9 +1042,9 @@
   }
 
   .blog-posts-container--below-banner .blog-post-item {
-    flex: 0 0 350px; /* Fixed width cards */
-    min-width: 350px;
-    max-width: 350px;
+    flex: 0 0 403px; /* Fixed width cards - 15% larger */
+    min-width: 403px;
+    max-width: 403px;
     scroll-snap-align: start;
     scroll-snap-stop: normal;
   }
@@ -1021,9 +1064,9 @@
 
   @media screen and (max-width: 749px) {
     .blog-posts-container--below-banner .blog-post-item {
-      flex: 0 0 280px;
-      min-width: 280px;
-      max-width: 280px;
+      flex: 0 0 322px;
+      min-width: 322px;
+      max-width: 322px;
     }
     
     .blog-posts-container--below-banner {

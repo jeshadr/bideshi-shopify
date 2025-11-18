@@ -206,7 +206,7 @@
   /* Blog Title (THE BIDESHI TIMES) */
   .article-blog-title {
     font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
-    font-size: clamp(2rem, 5vw, 7rem);
+    font-size: clamp(2.5rem, 6vw, 8.5rem);
     font-weight: 50;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -313,7 +313,7 @@
   .article-content {
     margin: 3rem 0;
     font-family: 'ZTFormom', 'Georgia', serif !important;
-    font-size: 1.125rem;
+    font-size: 1.19rem !important;
     line-height: 1.8;
     color: #333;
   }
@@ -326,6 +326,7 @@
   .article-content ul,
   .article-content ol {
     font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
   }
 
   .article-content h1,
@@ -349,16 +350,46 @@
   .article-content.rte,
   .article-content .rte {
     font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
   }
 
   .article-content.rte *,
   .article-content .rte * {
     font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
+  }
+
+  /* Override font size for footnote superscripts */
+  .article-content a.fn-ref sup,
+  .article-content .rte a.fn-ref sup,
+  .article-content.rte a.fn-ref sup {
+    font-size: 0.65em !important;
+  }
+
+  /* Remove underline from footnote references */
+  .article-content a.fn-ref,
+  .article-content .rte a.fn-ref,
+  .article-content.rte a.fn-ref {
+    text-decoration: none !important;
   }
 
   .article-content a {
     color: #0066cc;
     text-decoration: underline;
+  }
+
+  /* References toggle - make it much bigger with maximum specificity */
+  .fn-toggle,
+  .article-content .fn-toggle,
+  .article-content span.fn-toggle,
+  span.fn-toggle,
+  .article-content .fn-toggle * {
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif !important;
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+    line-height: 1.2 !important;
+    color: #000 !important;
   }
 
   .article-content a:hover {
@@ -594,7 +625,7 @@
     }
 
     .article-blog-title {
-      font-size: clamp(1.2rem, 7vw, 3rem);
+      font-size: clamp(1.5rem, 8vw, 3.5rem);
       letter-spacing: 0.08em;
       text-align: center;
     }
@@ -627,8 +658,20 @@
     }
 
     .article-content {
-      font-size: 1rem;
+      font-size: 1.07rem !important;
       line-height: 1.7;
+    }
+
+    .article-content *,
+    .article-content p,
+    .article-content div,
+    .article-content span,
+    .article-content li,
+    .article-content ul,
+    .article-content ol,
+    .article-content.rte *,
+    .article-content .rte * {
+      font-size: 1.07rem !important;
     }
 
     .article-separator {
@@ -679,7 +722,7 @@
     }
 
     .article-blog-title {
-      font-size: clamp(2rem, 5vw, 5rem);
+      font-size: clamp(2.5rem, 6vw, 6rem);
     }
 
     .article-featured-image-wrapper {

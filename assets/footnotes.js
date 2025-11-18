@@ -52,22 +52,24 @@
       // Create toggle text
       const toggle = document.createElement('span');
       toggle.className = 'fn-toggle';
-      toggle.innerHTML = 'References <span class="fn-arrow">▾</span>';
+      const arrow = document.createElement('span');
+      arrow.className = 'fn-arrow';
+      arrow.textContent = '▾';
+      toggle.appendChild(document.createTextNode('References '));
+      toggle.appendChild(arrow);
       refStart.style.fontWeight = '700';
       refStart.insertAdjacentElement('afterend', toggle);
   
       // --- Start collapsed by default ---
       let expanded = false;
-      refContainer.style.display = 'none';
       refContainer.classList.remove('fn-collapsible-open');
 
       // Function to expand references section
       function expandReferences() {
         if (!expanded) {
           expanded = true;
-          refContainer.style.display = 'block';
           refContainer.classList.add('fn-collapsible-open');
-          toggle.innerHTML = 'References <span class="fn-arrow">▴</span>';
+          arrow.style.transform = 'rotate(180deg)';
         }
       }
 
@@ -75,13 +77,12 @@
       toggle.addEventListener('click', () => {
         expanded = !expanded;
         if (expanded) {
-          refContainer.style.display = 'block';
           refContainer.classList.add('fn-collapsible-open');
+          arrow.style.transform = 'rotate(180deg)';
         } else {
-          refContainer.style.display = 'none';
           refContainer.classList.remove('fn-collapsible-open');
+          arrow.style.transform = 'rotate(0deg)';
         }
-        toggle.innerHTML = expanded ? 'References <span class="fn-arrow">▴</span>' : 'References <span class="fn-arrow">▾</span>';
       });
   
       // 2) Collect bottom references into a map: { "1": {node, html} }
@@ -160,15 +161,24 @@
                 e.preventDefault();
                 e.stopPropagation();
                 expandReferences();
-                // Small delay to ensure element is visible before scrolling
+                // Small delay to ensure references section starts expanding
                 setTimeout(() => {
                   const target = document.getElementById(`fn-${num}`);
                   if (target) {
-                    target.scrollIntoView({behavior:'smooth', block:'start'});
-                    // Remove hash from URL if it was added
-                    if (window.location.hash) {
-                      history.replaceState(null, '', window.location.pathname + window.location.search);
+                    // Ensure the target is visible (references section is expanded)
+                    if (!refContainer.classList.contains('fn-collapsible-open')) {
+                      refContainer.classList.add('fn-collapsible-open');
+                      expanded = true;
+                      arrow.style.transform = 'rotate(180deg)';
                     }
+                    // Short delay to allow element to become visible before scrolling
+                    setTimeout(() => {
+                      target.scrollIntoView({behavior:'smooth', block:'start'});
+                      // Remove hash from URL if it was added
+                      if (window.location.hash) {
+                        history.replaceState(null, '', window.location.pathname + window.location.search);
+                      }
+                    }, 100); // Reduced delay - element becomes visible quickly
                   }
                 }, 50);
               });
@@ -211,7 +221,8 @@
         tip.dataset.show = 'true';
         const ar = anchor.getBoundingClientRect();
         const tr = tip.getBoundingClientRect();
-        let left = Math.max(8, Math.min(ar.left, window.innerWidth - tr.width - 8));
+        // Move tooltip 20px to the left of the anchor
+        let left = Math.max(8, Math.min(ar.left - 20, window.innerWidth - tr.width - 8));
         let top = ar.top - tr.height - 12;
         if (top < 8) top = ar.bottom + 12;
         tip.style.left = `${left}px`;
@@ -222,7 +233,45 @@
         const num = a.dataset.fn;
         const data = fnMap.get(num);
         if (!data) return;
-        tip.innerHTML = data.html;
+        // Remove [n] prefix from tooltip content
+        let tooltipHtml = data.html;
+        // Remove [n] pattern at the start of the content (including any spaces)
+        tooltipHtml = tooltipHtml.replace(/^\[(\d{1,3})\]\s*/, '');
+        // Also remove any [n] patterns that might be in the text content
+        tooltipHtml = tooltipHtml.replace(/\[(\d{1,3})\]\s*/g, '');
+        
+        // Create a temporary element to clean up the HTML structure
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = tooltipHtml;
+        
+        // Remove leading whitespace from all text nodes
+        function cleanTextNodes(node) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            // Remove leading spaces from text nodes
+            node.textContent = node.textContent.replace(/^\s+/, '');
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // Process all child nodes
+            const children = Array.from(node.childNodes);
+            children.forEach(child => {
+              if (child.nodeType === Node.TEXT_NODE && child === node.firstChild) {
+                // Remove leading spaces from first text node
+                child.textContent = child.textContent.replace(/^\s+/, '');
+              }
+              cleanTextNodes(child);
+            });
+          }
+        }
+        
+        cleanTextNodes(tempDiv);
+        
+        // Remove any empty text nodes at the start
+        while (tempDiv.firstChild && 
+               tempDiv.firstChild.nodeType === Node.TEXT_NODE && 
+               tempDiv.firstChild.textContent.trim() === '') {
+          tempDiv.removeChild(tempDiv.firstChild);
+        }
+        
+        tip.innerHTML = tempDiv.innerHTML.trim();
         positionTip(a);
         tip.dataset.show = 'true';
         currentRef = a;

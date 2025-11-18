@@ -1,9 +1,14 @@
 /* ========== Footnotes (tooltip + collapsible references) ========== */
 
 /* Inline [n] anchors */
+a.fn-ref {
+  text-decoration: none !important;
+}
+
 a.fn-ref sup {
-    font-size: .8em;
+    font-size: .65em !important;
     cursor: pointer;
+    text-decoration: none !important;
   }
   
   /* Bottom items + back link */
@@ -16,6 +21,7 @@ a.fn-ref sup {
     position: fixed;
     z-index: 9999;
     max-width: 340px;
+    min-width: 50px;
     background: #ffe9e9;          /* bubble fill */
     border: 1px solid #f6bcbc;     /* border */
     border-radius: 8px;
@@ -23,9 +29,16 @@ a.fn-ref sup {
     box-shadow: 0 8px 22px rgba(0,0,0,.18);
     color: #111;
     font: 13px/1.45 Arial, sans-serif;
-    display: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    pointer-events: none;
   }
-  .fn-tooltip[data-show="true"]{ display: block; }
+  .fn-tooltip[data-show="true"]{ 
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
   
   /* Links inside bubble should be black/underlined */
   .fn-tooltip a { color: #000; text-decoration: underline; }
@@ -53,31 +66,38 @@ a.fn-ref sup {
   
   /* -------- Collapsible "References" block -------- */
   
-  /* The toggle text inserted after the heading */
-  .fn-toggle{
-    display: inline-block;
-    color: #000;
-    font-family: 'Georgia', serif;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin: .4rem 0 1rem;
-    padding: 0;
-    background: none;
-    border: none;
-    text-decoration: none;
-  }
-  
-  .fn-toggle:hover {
-    text-decoration: underline;
-  }
+/* The toggle text inserted after the heading */
+.fn-toggle,
+.fn-toggle *,
+span.fn-toggle,
+.article-content .fn-toggle,
+.article-content span.fn-toggle {
+  display: inline-block !important;
+  color: #000 !important;
+  font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif !important;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  margin: .4rem 0 1rem !important;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  line-height: 1.2 !important;
+}
+
+.fn-toggle:hover {
+  text-decoration: underline;
+}
   
   /* Arrow indicator */
   .fn-toggle .fn-arrow {
     display: inline-block;
-    margin-left: 0.25rem;
-    font-size: 0.9em;
-    transition: transform 0.2s ease;
+    margin-left: 0.5rem;
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+    transform-origin: center;
   }
   
   .fn-toggle:hover .fn-arrow {
@@ -86,19 +106,25 @@ a.fn-ref sup {
   
   /* Container that holds the reference list/paragraphs */
   .fn-collapsible{
-    overflow: visible;
-    display: none;  /* Start hidden */
+    display: block;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
     margin: 0;
+    visibility: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, margin 0.3s ease-in-out, visibility 0s linear 0.3s;
   }
   
   /* When expanded - use class for reliable styling */
   .fn-collapsible.fn-collapsible-open,
   .fn-collapsible[style*="display: block"],
   .fn-collapsible[style*="display:block"] {
-    display: block !important;
+    max-height: 5000px !important; /* Large enough to accommodate content */
     opacity: 1 !important;
     visibility: visible !important;
-    margin: 0.5rem 0 1rem;
+    margin: 0.5rem 0 1rem !important;
+    display: block !important;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, margin 0.3s ease-in-out, visibility 0s linear 0s;
   }
   
   /* Ensure all text inside is visible when expanded */
