@@ -505,6 +505,70 @@
   </div>
 </blog-posts-list>
 
+<script>
+  // Fix for blog post links in Shopify preview mode
+  // Ensure blog post card links navigate correctly even in preview mode
+  (function() {
+    function ensureBlogPostNavigation() {
+      // Find all blog post card links that haven't been processed yet
+      const blogPostLinks = document.querySelectorAll('.blog-post-card a[href*="/blogs/"]:not([data-nav-fixed]), .blog-post-card a[href*="/articles/"]:not([data-nav-fixed])');
+      
+      blogPostLinks.forEach(link => {
+        // Mark as processed to avoid duplicate handlers
+        link.setAttribute('data-nav-fixed', 'true');
+        
+        // Add click handler that ensures navigation works in preview mode
+        link.addEventListener('click', function(e) {
+          // Don't interfere if it's a modifier key (new tab/window)
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
+            return; // Let browser handle it
+          }
+          
+          // Don't interfere if clicking on interactive elements inside the link
+          const interactiveElement = e.target.closest('button, input, label, select');
+          if (interactiveElement && interactiveElement !== link) {
+            return;
+          }
+          
+          const href = link.getAttribute('href');
+          if (!href || href === '#' || href === window.location.pathname) {
+            return;
+          }
+          
+          // In Shopify preview mode, navigation might be prevented
+          // Check if we're still on the same page after a short delay
+          const originalHref = window.location.href;
+          const targetUrl = new URL(href, window.location.origin);
+          
+          setTimeout(() => {
+            // If we haven't navigated, force it
+            if (window.location.href === originalHref && window.location.pathname !== targetUrl.pathname) {
+              window.location.href = href;
+            }
+          }, 150);
+        }, { passive: true, capture: false });
+      });
+    }
+    
+    // Run on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', ensureBlogPostNavigation);
+    } else {
+      ensureBlogPostNavigation();
+    }
+    
+    // Also run after dynamic content loads (for paginated lists)
+    const observer = new MutationObserver(() => {
+      ensureBlogPostNavigation();
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  })();
+</script>
+
 {% stylesheet %}
   /**
    * Blog posts page layout
