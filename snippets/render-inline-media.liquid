@@ -14,18 +14,18 @@
   assign media_video_links = article.metafields.custom.media_video_link.value
 -%}
 
-{%- comment -%} Process Direct Image Links: [image:URL|layout|caption] {%- endcomment -%}
-{%- if processed_content contains '[image:' -%}
+{%- comment -%} Process Direct Image Links: [[image:URL|layout|caption]] {%- endcomment -%}
+{%- if processed_content contains '[[image:' -%}
   {%- comment -%} Process up to 50 image links (should be enough for any article) {%- endcomment -%}
   {%- for i in (1..50) -%}
-    {%- if processed_content contains '[image:' -%}
+    {%- if processed_content contains '[[image:' -%}
       {%- liquid
-        # Find the first [image: pattern
-        assign before_pattern = processed_content | split: '[image:' | first
-        assign after_pattern = processed_content | split: '[image:' | last
+        # Find the first [[image: pattern
+        assign before_pattern = processed_content | split: '[[image:' | first
+        assign after_pattern = processed_content | split: '[[image:' | last
         
-        # Extract content up to the closing bracket
-        assign url_and_options = after_pattern | split: ']' | first
+        # Extract content up to the closing double bracket
+        assign url_and_options = after_pattern | split: ']]' | first
       -%}
       
       {%- if url_and_options != after_pattern -%}
@@ -51,7 +51,7 @@
             assign caption = parts[2] | strip
           endif
           
-          assign original_shortcode = '[image:' | append: url_and_options | append: ']'
+          assign original_shortcode = '[[image:' | append: url_and_options | append: ']]'
         -%}
         
         {%- capture image_html -%}
@@ -84,9 +84,9 @@
   {%- for image in media_images -%}
     {%- liquid
       assign index = forloop.index
-      assign base_shortcode = '[media-image-' | append: index
+      assign base_shortcode = '[[media-image-' | append: index
       
-      # Search for enhanced shortcode with options: [media-image-1|layout|caption]
+      # Search for enhanced shortcode with options: [[media-image-1|layout|caption]]
       assign search_pattern = base_shortcode | append: '|'
       assign search_pos = processed_content | split: search_pattern | first | size
       
@@ -97,7 +97,7 @@
       # Check if enhanced shortcode exists
       if processed_content contains search_pattern
         assign after_marker = processed_content | split: search_pattern | last
-        assign shortcode_end = after_marker | split: ']' | first
+        assign shortcode_end = after_marker | split: ']]' | first
         assign parts = shortcode_end | split: '|'
         
         if parts.size > 0
@@ -114,9 +114,9 @@
           assign caption = parts[1] | strip
         endif
         
-        assign shortcode = base_shortcode | append: '|' | append: shortcode_end | append: ']'
+        assign shortcode = base_shortcode | append: '|' | append: shortcode_end | append: ']]'
       else
-        assign shortcode = base_shortcode | append: ']'
+        assign shortcode = base_shortcode | append: ']]'
       endif
     -%}
     
