@@ -535,18 +535,15 @@
             return;
           }
           
-          // In Shopify preview mode, navigation might be prevented
-          // Check if we're still on the same page after a short delay
-          const originalHref = window.location.href;
-          const targetUrl = new URL(href, window.location.origin);
+          // In Shopify preview mode, prevent any partial navigation attempts
+          // and force a full page reload
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
           
-          setTimeout(() => {
-            // If we haven't navigated, force it
-            if (window.location.href === originalHref && window.location.pathname !== targetUrl.pathname) {
-              window.location.href = href;
-            }
-          }, 150);
-        }, { passive: true, capture: false });
+          // Force full page navigation
+          window.location.href = href;
+        }, { passive: false, capture: true });
       });
     }
     
