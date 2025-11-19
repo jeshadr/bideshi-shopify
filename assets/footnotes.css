@@ -92,10 +92,16 @@ span.fn-toggle,
 }
   
   /* Arrow indicator */
-  .fn-toggle .fn-arrow {
+  .fn-toggle .fn-arrow,
+  .article-content .fn-toggle .fn-arrow,
+  .article-content span.fn-toggle .fn-arrow,
+  span.fn-toggle .fn-arrow {
     display: inline-block;
     margin-left: 0.5rem;
-    font-size: 0.8em;
+    font-size: 0.6em !important;
+    vertical-align: baseline;
+    position: relative;
+    top: -0.2em; /* Adjust this value: negative moves up, positive moves down */
     transition: transform 0.3s ease;
     transform-origin: center;
   }
