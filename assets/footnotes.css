@@ -6,10 +6,15 @@ a.fn-ref {
 }
 
 a.fn-ref sup {
-    font-size: .65em !important;
-    cursor: pointer;
-    text-decoration: none !important;
-  }
+  font-size: .65em !important;
+  cursor: pointer;
+  text-decoration: none !important;
+  position: relative;
+  top: -0.8em;
+  line-height: 1 !important;
+  display: inline-block;
+  vertical-align: baseline;
+}
   
   /* Bottom items + back link */
   .fn-item { scroll-margin-top: 80px; }
