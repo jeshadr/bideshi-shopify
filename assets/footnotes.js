@@ -27,7 +27,11 @@
       } else {
         const headings = Array.from(root.querySelectorAll('h1,h2,h3,h4,strong,b,p'));
         const hit = headings.find(h => /references/i.test(h.textContent.trim()));
-        if (hit) refStart = hit;
+        if (hit) {
+          refStart = hit;
+          // Hide the original "References" text to avoid duplication with toggle button
+          refStart.style.display = 'none';
+        }
       }
       if (!refStart){ log("No <hr> or References heading found"); return; }
   
@@ -49,6 +53,14 @@
       collected.forEach(el => refContainer.appendChild(el));
       refStart.insertAdjacentElement('afterend', refContainer);
   
+      // Create separator line above toggle
+      const separator = document.createElement('hr');
+      separator.style.margin = '2rem 0 1rem 0';
+      separator.style.borderTop = '1px solid #000';
+      separator.style.borderBottom = 'none';
+      separator.style.borderLeft = 'none';
+      separator.style.borderRight = 'none';
+      
       // Create toggle text
       const toggle = document.createElement('span');
       toggle.className = 'fn-toggle';
@@ -58,7 +70,8 @@
       toggle.appendChild(document.createTextNode('References '));
       toggle.appendChild(arrow);
       refStart.style.fontWeight = '700';
-      refStart.insertAdjacentElement('afterend', toggle);
+      refStart.insertAdjacentElement('afterend', separator);
+      separator.insertAdjacentElement('afterend', toggle);
   
       // --- Start collapsed by default ---
       let expanded = false;
