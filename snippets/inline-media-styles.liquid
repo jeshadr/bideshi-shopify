@@ -23,16 +23,22 @@
     vertical-align: bottom;
   }
 
-  .inline-media--image figcaption {
-    font-size: 0.875rem;
-    font-family: 'Georgia', serif;
-    color: #000;
-    margin: 0;
-    padding: 12px 12px 0 12px;
-    text-align: center;
-    font-style: normal;
-    line-height: 1.4;
-    background: transparent;
+  /* Image captions - highest specificity to override any other styles */
+  .inline-media--image figcaption,
+  figure.inline-media--image figcaption,
+  .article-content .inline-media--image figcaption,
+  .article-content figure.inline-media--image figcaption,
+  .blog-post-content .inline-media--image figcaption,
+  .blog-post-content figure.inline-media--image figcaption {
+    font-size: 1rem !important;
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    color: #000 !important;
+    margin: 0 !important;
+    padding: 12px 12px 0 12px !important;
+    text-align: center !important;
+    font-style: normal !important;
+    line-height: 1.4 !important;
+    background: transparent !important;
   }
 
   .inline-media video {
@@ -62,8 +68,11 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
-  .inline-media figcaption {
-    font-size: 0.875rem;
+  /* General figcaption for non-image media (video, audio, embed) */
+  .inline-media--embed figcaption,
+  .inline-media--video figcaption,
+  .inline-media--audio figcaption {
+    font-size: 0.75rem;
     font-family: 'Georgia', serif;
     color: #000;
     margin-top: 0.75rem;
@@ -84,8 +93,8 @@
   /* Float right layout - text wraps on left */
   .inline-media--float-right {
     float: right;
-    width: 35%;
-    max-width: 400px;
+    width: 45%;
+    max-width: 500px;
     margin: 0 0 1.5rem 2rem;
     clear: right;
   }
@@ -93,8 +102,8 @@
   /* Float left layout - text wraps on right */
   .inline-media--float-left {
     float: left;
-    width: 35%;
-    max-width: 400px;
+    width: 45%;
+    max-width: 500px;
     margin: 0 2rem 1.5rem 0;
     clear: left;
   }
@@ -118,9 +127,16 @@
       padding: 0 0 8px 0;
     }
 
-    .inline-media--image figcaption {
-      padding: 8px 8px 0 8px;
-      font-size: 0.8125rem;
+    /* Mobile image captions - highest specificity */
+    .inline-media--image figcaption,
+    figure.inline-media--image figcaption,
+    .article-content .inline-media--image figcaption,
+    .article-content figure.inline-media--image figcaption,
+    .blog-post-content .inline-media--image figcaption,
+    .blog-post-content figure.inline-media--image figcaption {
+      padding: 8px 8px 0 8px !important;
+      font-size: 0.5rem !important;
+      font-family: 'ZTFormom', 'Georgia', serif !important;
     }
 
     /* On mobile, all layouts become full-width */
