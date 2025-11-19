@@ -374,15 +374,11 @@
       
       {%- comment -%} First 6 articles (rows 1-3): 1 featured + 2 + 3 {%- endcomment -%}
       <div
-        ref="grid"
         class="blog-posts-container blog-posts-container--above-banner"
-        data-last-page="{{ paginate.pages }}"
       >
     {% for article in blog.articles limit: 6 %}
       <div
         class="blog-post-item{% if forloop.first %} featured-article{% endif %}"
-        ref="cards[]"
-        data-page="{{ paginate.current_page }}"
         data-index="{{ forloop.index0 }}"
       >
         {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
@@ -477,9 +473,28 @@
     ref="grid"
     class="blog-posts-container blog-posts-container--below-banner"
     data-last-page="{{ paginate.pages }}"
+    data-total-articles="{{ paginate.items }}"
+    data-hero-count="6"
   >
-    {% for article in blog.articles %}
-      {% if forloop.index > 6 %}
+    {%- for article in blog.articles -%}
+      {%- if paginate.current_page == 1 -%}
+        {%- if forloop.index > 6 -%}
+          <div
+            class="blog-post-item"
+            ref="cards[]"
+            data-page="{{ paginate.current_page }}"
+          >
+            {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+          </div>
+        {%- elsif forloop.index > 3 -%}
+          {%- comment -%} Articles 4-6: show in scroller on mobile, hide on desktop {%- endcomment -%}
+          <div
+            class="blog-post-item blog-post-item--mobile-only"
+          >
+            {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+          </div>
+        {%- endif -%}
+      {%- else -%}
         <div
           class="blog-post-item"
           ref="cards[]"
@@ -487,17 +502,8 @@
         >
           {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
         </div>
-      {% elsif forloop.index > 3 %}
-        {%- comment -%} Articles 4-6: show in scroller on mobile, hide on desktop {%- endcomment -%}
-        <div
-          class="blog-post-item blog-post-item--mobile-only"
-          ref="cards[]"
-          data-page="{{ paginate.current_page }}"
-        >
-          {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
-        </div>
-      {% endif %}
-    {% endfor %}
+      {%- endif -%}
+    {%- endfor -%}
   </div>
   
   <span ref="viewMoreNext"></span>

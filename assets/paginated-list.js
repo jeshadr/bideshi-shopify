@@ -47,6 +47,7 @@ export default class PaginatedList extends Component {
     this.#fetchPage('next');
     this.#fetchPage('previous');
     this.#observeViewMore();
+    this.#preloadInitialOverflow();
 
     // Listen for filter updates to clear cached pages
     document.addEventListener(ThemeEvents.FilterUpdate, this.#handleFilterUpdate);
@@ -165,13 +166,17 @@ export default class PaginatedList extends Component {
   }
 
   async #renderNextPage() {
+    await this.#appendNextPage();
+  }
+
+  async #appendNextPage({ suppressHistory = false } = {}) {
     const { grid } = this.refs;
 
-    if (!grid) return;
+    if (!grid) return false;
 
     const nextPage = this.#getPage('next');
 
-    if (!nextPage || !this.#shouldUsePage(nextPage)) return;
+    if (!nextPage || !this.#shouldUsePage(nextPage)) return false;
     let nextPageItemElements = this.#getGridForPage(nextPage.page);
 
     if (!nextPageItemElements) {
@@ -184,18 +189,22 @@ export default class PaginatedList extends Component {
 
       await promise;
       nextPageItemElements = this.#getGridForPage(nextPage.page);
-      if (!nextPageItemElements) return;
+      if (!nextPageItemElements) return false;
     }
 
     grid.append(...nextPageItemElements);
 
-    this.#aspectRatioHelper.processNewElements();
+    this.#aspectRatioHelper?.processNewElements();
 
-    history.pushState('', '', nextPage.url.toString());
+    if (!suppressHistory) {
+      history.pushState('', '', nextPage.url.toString());
+    }
 
     requestIdleCallback(() => {
       this.#fetchPage('next');
     });
+
+    return true;
   }
 
   async #renderPreviousPage() {
@@ -272,6 +281,25 @@ export default class PaginatedList extends Component {
       page,
       url,
     };
+  }
+
+  async #preloadInitialOverflow() {
+    const { grid } = this.refs;
+
+    if (!grid) return;
+
+    const totalArticles = Number(grid.dataset.totalArticles || 0);
+    const heroCount = Number(grid.dataset.heroCount || 0);
+
+    const targetCards = Math.max(0, totalArticles - heroCount);
+    if (targetCards <= 0) return;
+
+    const countCards = () => grid.querySelectorAll('[ref="cards[]"]').length;
+
+    while (countCards() < targetCards) {
+      const appended = await this.#appendNextPage({ suppressHistory: true });
+      if (!appended) break;
+    }
   }
 
   /**
