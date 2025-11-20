@@ -1126,7 +1126,6 @@
     gap: 1.5rem;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     padding: 2rem 0 3rem 0;
     margin-bottom: 3rem;
@@ -1137,7 +1136,7 @@
     /* Add left padding to align first card with page content */
     padding-left: max(2rem, calc(50vw - var(--page-content-width) / 2));
     padding-right: 2rem;
-    /* Scroll padding ensures first item snaps at the left padding position */
+    /* Scroll padding ensures first item aligns with left padding */
     scroll-padding-left: max(2rem, calc(50vw - var(--page-content-width) / 2));
     /* Hide scrollbar but keep functionality */
     scrollbar-width: none; /* Firefox */
@@ -1152,13 +1151,10 @@
     flex: 0 0 403px; /* Fixed width cards - 15% larger */
     min-width: 403px;
     max-width: 403px;
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
   }
   
   /* First article maintains left margin alignment */
   .blog-posts-container--below-banner .blog-post-item:first-child {
-    scroll-snap-align: start;
     margin-left: 0; /* No extra margin needed, padding handles it */
   }
 
