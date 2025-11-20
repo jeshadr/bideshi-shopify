@@ -2,6 +2,7 @@
   .inline-media {
     margin: 2rem 0;
     width: 100%;
+    --inline-media-scale: 1;
   }
 
   /* Images with border around entire figure */
@@ -30,7 +31,7 @@
   .article-content figure.inline-media--image figcaption,
   .blog-post-content .inline-media--image figcaption,
   .blog-post-content figure.inline-media--image figcaption {
-    font-size: 1rem !important;
+    font-size: calc(1rem * var(--inline-media-scale, 1)) !important;
     font-family: 'ZTFormom', 'Georgia', serif !important;
     color: #000 !important;
     margin: 0 !important;
@@ -84,8 +85,8 @@
 
   /* Full-width layout (default) */
   .inline-media--full {
-    width: 80%;
-    max-width: 800px;
+    width: calc(80% * var(--inline-media-scale, 1));
+    max-width: calc(800px * var(--inline-media-scale, 1));
     margin: 2rem auto;
     clear: both;
   }
@@ -93,8 +94,8 @@
   /* Float right layout - text wraps on left */
   .inline-media--float-right {
     float: right;
-    width: 45%;
-    max-width: 500px;
+    width: calc(45% * var(--inline-media-scale, 1));
+    max-width: calc(500px * var(--inline-media-scale, 1));
     margin: 0 0 1.5rem 2rem;
     clear: right;
   }
@@ -102,16 +103,16 @@
   /* Float left layout - text wraps on right */
   .inline-media--float-left {
     float: left;
-    width: 45%;
-    max-width: 500px;
+    width: calc(45% * var(--inline-media-scale, 1));
+    max-width: calc(500px * var(--inline-media-scale, 1));
     margin: 0 2rem 1.5rem 0;
     clear: left;
   }
 
   /* Center layout - centered with limited width */
   .inline-media--center {
-    width: 50%;
-    max-width: 500px;
+    width: calc(50% * var(--inline-media-scale, 1));
+    max-width: calc(500px * var(--inline-media-scale, 1));
     margin: 2rem auto;
     clear: both;
   }
@@ -135,7 +136,7 @@
     .blog-post-content .inline-media--image figcaption,
     .blog-post-content figure.inline-media--image figcaption {
       padding: 8px 8px 0 8px !important;
-      font-size: 0.5rem !important;
+      font-size: calc(0.5rem * var(--inline-media-scale, 1)) !important;
       font-family: 'ZTFormom', 'Georgia', serif !important;
     }
 
@@ -144,7 +145,7 @@
     .inline-media--float-left,
     .inline-media--center {
       float: none;
-      width: 100%;
+      width: min(100%, calc(100% * var(--inline-media-scale, 1)));
       max-width: 100%;
       margin: 1.5rem 0;
     }
