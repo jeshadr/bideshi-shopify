@@ -42,7 +42,7 @@
           "type": "text",
           "name": "Subtitle",
           "settings": {
-            "text": "<p>A story told by Bideshi</p>",
+            "text": "<p>A Bideshi Project</p>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "center",

@@ -7,25 +7,9 @@
 <div class="article-page-background"></div>
 <div class="article-page-wrapper">
   <div class="article-container">
-    {%- comment -%} Logo and Title side by side {%- endcomment -%}
+    {%- comment -%} Blog Title (THE BIDESHI TIMES) {%- endcomment -%}
     <div class="article-header">
-      <div class="article-header-logo">
-        <a href="{{ routes.root_url }}" aria-label="Home">
-          {%- if settings.logo != blank -%}
-            <img
-              src="{{ settings.logo | image_url: width: 300 }}"
-              alt="{{ shop.name | escape }}"
-              width="300"
-              loading="eager"
-            >
-          {%- else -%}
-            <span class="article-logo-fallback">ব</span>
-          {%- endif -%}
-        </a>
-      </div>
-
-      {%- comment -%} Blog Title (THE BIDESHI TIMES) {%- endcomment -%}
-      <h1 class="article-blog-title">THE BIDESHI TIMES</h1>
+      <h1 class="article-blog-title">PURAN PATRIKA</h1>
     </div>
 
     {%- comment -%} Double line separator {%- endcomment -%}
@@ -81,6 +65,7 @@
           src="{{ thumbnail_image | image_url: width: 2000 }}"
           alt="{{ article.title | escape }}"
           width="2000"
+          height="{{ thumbnail_image.height }}"
           loading="eager"
           class="article-featured-image"
         >
@@ -182,25 +167,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2rem;
     margin-bottom: 2rem;
-  }
-
-  .article-header-logo {
-    display: flex;
-    align-items: center;
-  }
-
-  .article-header-logo img {
-    height: 120px;
-    width: auto;
-  }
-
-  .article-logo-fallback {
-    display: inline-block;
-    font-size: 90px;
-    font-weight: 700;
-    color: #000;
   }
 
   /* Blog Title (THE BIDESHI TIMES) */
@@ -866,14 +833,6 @@
       gap: 1rem;
     }
 
-    .article-header-logo img {
-      height: 60px;
-    }
-
-    .article-logo-fallback {
-      font-size: 50px;
-    }
-
     .article-blog-title {
       font-size: clamp(1.5rem, 8vw, 3.5rem);
       letter-spacing: 0.08em;
@@ -1002,14 +961,6 @@
   }
 
   @media screen and (max-width: 1024px) and (min-width: 750px) {
-    .article-header-logo img {
-      height: 90px;
-    }
-
-    .article-logo-fallback {
-      font-size: 70px;
-    }
-
     .article-blog-title {
       font-size: clamp(2.5rem, 6vw, 6rem);
     }
