@@ -169,7 +169,7 @@ export default class PaginatedList extends Component {
     await this.#appendNextPage();
   }
 
-  async #appendNextPage({ suppressHistory = false } = {}) {
+  async #appendNextPage() {
     const { grid } = this.refs;
 
     if (!grid) return false;
@@ -195,10 +195,6 @@ export default class PaginatedList extends Component {
     grid.append(...nextPageItemElements);
 
     this.#aspectRatioHelper?.processNewElements();
-
-    if (!suppressHistory) {
-      history.pushState('', '', nextPage.url.toString());
-    }
 
     requestIdleCallback(() => {
       this.#fetchPage('next');
@@ -238,8 +234,6 @@ export default class PaginatedList extends Component {
     grid.prepend(...previousPageItemElements);
 
     this.#aspectRatioHelper.processNewElements();
-
-    history.pushState('', '', previousPage.url.toString());
 
     // Calculate and adjust scroll position to maintain the same view
     if (firstElement) {
@@ -297,7 +291,7 @@ export default class PaginatedList extends Component {
     const countCards = () => grid.querySelectorAll('[ref="cards[]"]').length;
 
     while (countCards() < targetCards) {
-      const appended = await this.#appendNextPage({ suppressHistory: true });
+      const appended = await this.#appendNextPage();
       if (!appended) break;
     }
   }
