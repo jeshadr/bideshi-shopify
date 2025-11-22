@@ -299,25 +299,83 @@
     document.body.appendChild(tip);
 
     let currentRef = null;
+    let hideTimeout = null;
 
     function positionTip(anchor){
+      // Position off-screen first to measure
       tip.style.left = '0px';
       tip.style.top = '-1000px';
-      tip.dataset.show = 'true';
-      const ar = anchor.getBoundingClientRect();
-      const tr = tip.getBoundingClientRect();
-      // Move tooltip 20px to the left of the anchor
-      let left = Math.max(8, Math.min(ar.left - 20, window.innerWidth - tr.width - 8));
-      let top = ar.top - tr.height - 12;
-      if (top < 8) top = ar.bottom + 12;
-      tip.style.left = `${left}px`;
+      // Make it visible but off-screen for accurate measurement
+      if (!tip.classList.contains('visible')) {
+        tip.classList.add('visible');
+      }
+      
+      // Force reflow to get accurate measurements after content is set
+      void tip.offsetHeight;
+      
+      const triggerRect = anchor.getBoundingClientRect();
+      const tooltipRect = tip.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const scrollY = window.scrollY;
+      const scrollX = window.scrollX;
+
+      // Default position: above the element, centered
+      let top = triggerRect.top + scrollY - tooltipRect.height - 10;
+      let left = triggerRect.left + scrollX + (triggerRect.width / 2) - (tooltipRect.width / 2);
+
+      // Check if tooltip goes off the top of the screen
+      if (top < scrollY + 10) {
+        // Position below the element instead
+        top = triggerRect.bottom + scrollY + 10;
+        tip.classList.add('below');
+      } else {
+        tip.classList.remove('below');
+      }
+
+      // Check if tooltip goes off the right side
+      if (left + tooltipRect.width > scrollX + viewportWidth - 20) {
+        left = scrollX + viewportWidth - tooltipRect.width - 20;
+      }
+
+      // Check if tooltip goes off the left side
+      if (left < scrollX + 20) {
+        left = scrollX + 20;
+      }
+      
+      // Ensure tooltip doesn't exceed viewport width
+      const maxTooltipWidth = viewportWidth - 40; // 20px margin on each side
+      if (tooltipRect.width > maxTooltipWidth) {
+        tip.style.maxWidth = `${maxTooltipWidth}px`;
+        tip.style.width = 'auto';
+        // Re-measure after width change
+        void tip.offsetHeight;
+        const newTooltipRect = tip.getBoundingClientRect();
+        // Recalculate left position with new width
+        left = triggerRect.left + scrollX + (triggerRect.width / 2) - (newTooltipRect.width / 2);
+        if (left + newTooltipRect.width > scrollX + viewportWidth - 20) {
+          left = scrollX + viewportWidth - newTooltipRect.width - 20;
+        }
+        if (left < scrollX + 20) {
+          left = scrollX + 20;
+        }
+      }
+
       tip.style.top = `${top}px`;
+      tip.style.left = `${left}px`;
     }
 
     function showTip(a){
       const num = a.dataset.fn;
       const data = fnMap.get(num);
       if (!data) return;
+      
+      // Cancel any pending hide
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
+      }
+      
       // Remove [n] prefix from tooltip content
       let tooltipHtml = data.html;
       // Remove [n] pattern at the start of the content (including any spaces)
@@ -356,34 +414,93 @@
         tempDiv.removeChild(tempDiv.firstChild);
       }
       
-      tip.innerHTML = tempDiv.innerHTML.trim();
+      const cleanedContent = tempDiv.innerHTML.trim();
+      if (!cleanedContent) return;
+      
+      // Build tooltip HTML with only content (no header)
+      const tooltipContent = `
+        <div class="fn-tooltip-content">
+          <div class="fn-tooltip-text">${cleanedContent}</div>
+        </div>
+      `;
+      
+      tip.innerHTML = tooltipContent;
+      
+      // Position the tooltip
       positionTip(a);
-      tip.dataset.show = 'true';
-      currentRef = a;
+      
+      // Show with a slight delay for smoother UX
+      setTimeout(() => {
+        tip.classList.add('visible');
+        currentRef = a;
+      }, 50);
+    }
+
+    function scheduleHideTip(){
+      hideTimeout = setTimeout(() => {
+        hideTip();
+      }, 200);
+    }
+
+    function cancelHideTip() {
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
+      }
     }
 
     function hideTip(){
-      tip.dataset.show = 'false';
+      tip.classList.remove('visible');
       currentRef = null;
     }
 
+    // Mouse events
     document.addEventListener('mouseover', (e) => {
       const a = e.target.closest('a.fn-ref');
-      if (a){ showTip(a); }
-      else if (!tip.contains(e.target)){ hideTip(); }
-    }, { passive:true });
+      if (a) {
+        showTip(a);
+      }
+    }, { passive: true });
 
+    document.addEventListener('mouseout', (e) => {
+      const a = e.target.closest('a.fn-ref');
+      if (a && !tip.contains(e.relatedTarget)) {
+        scheduleHideTip();
+      }
+    }, { passive: true });
+
+    // Keep tooltip visible when hovering over it
+    tip.addEventListener('mouseenter', () => {
+      cancelHideTip();
+    });
+
+    tip.addEventListener('mouseleave', () => {
+      hideTip();
+    });
+
+    // Focus events
     document.addEventListener('focusin', (e) => {
       const a = e.target.closest('a.fn-ref');
       if (a) showTip(a);
     });
-    document.addEventListener('focusout', hideTip);
+    document.addEventListener('focusout', (e) => {
+      const a = e.target.closest('a.fn-ref');
+      if (a && !tip.contains(e.target)) {
+        scheduleHideTip();
+      }
+    });
 
+    // Update position on scroll/resize
     window.addEventListener('scroll', () => {
-      if (tip.dataset.show === 'true' && currentRef) positionTip(currentRef);
+      if (tip.classList.contains('visible') && currentRef) {
+        positionTip(currentRef);
+      }
     }, { passive:true });
+    
     window.addEventListener('resize', () => {
-      if (tip.dataset.show === 'true' && currentRef) positionTip(currentRef);
+      if (tip.classList.contains('visible') && currentRef) {
+        positionTip(currentRef);
+      }
     });
 
     log("Initialized with", fnMap.size, "references");

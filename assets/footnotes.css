@@ -21,52 +21,172 @@ a.fn-ref sup {
   .fn-back { margin-left: .4em; text-decoration: none; font-size: .9em; }
   .fn-back:hover { text-decoration: underline; }
   
-  /* -------- Tooltip (light red bubble) -------- */
+  /* -------- Tooltip (matches article-tooltip-popup styling) -------- */
   .fn-tooltip{
-    position: fixed;
-    z-index: 9999;
-    max-width: 340px;
-    min-width: 50px;
-    background: #ffe9e9;          /* bubble fill */
-    border: 1px solid #f6bcbc;     /* border */
-    border-radius: 8px;
-    padding: .6rem .75rem;
-    box-shadow: 0 8px 22px rgba(0,0,0,.18);
-    color: #111;
-    font: 13px/1.45 Arial, sans-serif;
+    position: absolute;
+    z-index: 1000;
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
     pointer-events: none;
+    max-width: 320px;
+    width: max-content;
+    min-width: 200px;
   }
-  .fn-tooltip[data-show="true"]{ 
+  
+  .fn-tooltip.visible{ 
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
   }
   
-  /* Links inside bubble should be black/underlined */
-  .fn-tooltip a { color: #000; text-decoration: underline; }
-  .fn-tooltip a:hover, .fn-tooltip a:focus { text-decoration: underline; }
+  .fn-tooltip-content {
+    background: #ffe9e9;
+    color: #000000;
+    padding: 0;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border: 1px solid #f6bcbc;
+    font-size: 14px;
+    line-height: 1.6;
+    position: relative;
+    overflow: visible;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
   
-  /* little arrow */
-  .fn-tooltip::after{
-    content: "";
+  /* Tooltip header with icon and title */
+  .fn-tooltip-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 14px 8px 14px;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .fn-tooltip-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: #000000;
+  }
+  
+  .fn-tooltip-title {
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    font-weight: 600;
+    font-style: italic;
+    margin: 0;
+    color: #000000;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .fn-tooltip-text {
+    padding: 12px 14px 14px 14px;
+    font-family: 'Georgia', serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #000000;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+  
+  /* Ensure URLs and long text wrap properly */
+  .fn-tooltip-text a,
+  .fn-tooltip-text * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  
+  /* Arrow pointing to the trigger word */
+  .fn-tooltip-content::before {
+    content: '';
     position: absolute;
-    width: 0; height: 0;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-top: 8px solid #f6bcbc; /* outer border */
-    bottom: -8px; left: 16px;
+    border-top: 7px solid #ffe9e9;
+    z-index: 1;
   }
-  .fn-tooltip::before{
-    content: "";
+  
+  /* Subtle shadow for arrow */
+  .fn-tooltip-content::after {
+    content: '';
     position: absolute;
-    width: 0; height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 7px solid #ffe9e9; /* inner fill */
-    bottom: -7px; left: 17px; z-index: 1;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #f6bcbc;
+    z-index: 0;
+  }
+  
+  /* Arrow flips when tooltip is below */
+  .fn-tooltip.below .fn-tooltip-content::before {
+    bottom: auto;
+    top: -7px;
+    border-top: none;
+    border-bottom: 7px solid #ffe9e9;
+  }
+  
+  .fn-tooltip.below .fn-tooltip-content::after {
+    bottom: auto;
+    top: -8px;
+    border-top: none;
+    border-bottom: 8px solid #f6bcbc;
+  }
+  
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .fn-tooltip {
+      max-width: calc(100vw - 40px);
+    }
+    
+    .fn-tooltip-header {
+      padding: 10px 12px 6px 12px;
+    }
+    
+    .fn-tooltip-title {
+      font-size: 14px;
+    }
+    
+    .fn-tooltip-text {
+      padding: 10px 12px 12px 12px;
+      font-size: 12px;
+    }
+    
+    .fn-tooltip-icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  /* Link styling inside tooltips */
+  .fn-tooltip-content a {
+    color: var(--color-primary, #0066cc);
+    text-decoration: underline;
+  }
+  
+  .fn-tooltip-content a:hover {
+    color: var(--color-primary-hover, #0052a3);
   }
   
   /* -------- Collapsible "References" block -------- */
