@@ -9,7 +9,7 @@
   <div class="article-container">
     {%- comment -%} Blog Title (THE BIDESHI TIMES) {%- endcomment -%}
     <div class="article-header">
-      <h1 class="article-blog-title">PURAN PATRIKA</h1>
+      <h1 class="article-blog-title">{{ blog.title | default: article.blog.title | default: "This is a test" | upcase }}</h1>
     </div>
 
     {%- comment -%} Double line separator {%- endcomment -%}

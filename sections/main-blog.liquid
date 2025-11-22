@@ -317,6 +317,62 @@
       init();
     }
   })();
+
+  // Make horizontal scroll container draggable with instant response
+  (function initDraggableScroll() {
+    function init() {
+      const scrollContainer = document.querySelector('.blog-posts-container--below-banner');
+      if (!scrollContainer) return;
+
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+
+      // Disable smooth scrolling during drag for instant response
+      scrollContainer.addEventListener('mousedown', function(e) {
+        // Don't interfere with link clicks
+        if (e.target.closest('a, button')) return;
+        
+        isDown = true;
+        scrollContainer.style.cursor = 'grabbing';
+        scrollContainer.style.userSelect = 'none';
+        scrollContainer.style.scrollBehavior = 'auto'; // Instant scrolling
+        startX = e.pageX - scrollContainer.offsetLeft;
+        scrollLeft = scrollContainer.scrollLeft;
+      });
+
+      scrollContainer.addEventListener('mouseleave', function() {
+        isDown = false;
+        scrollContainer.style.cursor = 'grab';
+        scrollContainer.style.userSelect = '';
+        scrollContainer.style.scrollBehavior = ''; // Restore default
+      });
+
+      scrollContainer.addEventListener('mouseup', function() {
+        isDown = false;
+        scrollContainer.style.cursor = 'grab';
+        scrollContainer.style.userSelect = '';
+        scrollContainer.style.scrollBehavior = ''; // Restore default
+      });
+
+      scrollContainer.addEventListener('mousemove', function(e) {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - scrollContainer.offsetLeft;
+        const walk = (x - startX) * 1; // Increased multiplier for more responsive feel
+        scrollContainer.scrollLeft = scrollLeft - walk;
+      });
+
+      // Set initial cursor
+      scrollContainer.style.cursor = 'grab';
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
 </script>
 
 <blog-posts-list section-id="{{ section.id }}" class="blog-page-wrapper">
@@ -764,13 +820,13 @@
     border: 1px solid #d0d0d0;
     box-shadow: 
       0.5px 0.5px 3px rgba(0, 0, 0, 0.1),
-      -1px -1px 3px rgba(255, 255, 255, 0.8);
   }
 
   .blog-nav-btn:hover {
     background-color: #e8e8e8;
     color: #666;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   .blog-nav-btn.active {
@@ -798,13 +854,12 @@
     border: 1px solid #d0d0d0;
     box-shadow: 
       0.5px 0.5px 3px rgba(0, 0, 0, 0.1),
-      -1px -1px 3px rgba(255, 255, 255, 0.8);
   }
 
   .blog-category-btn:hover {
     background-color: #e8e8e8;
     color: #666;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
@@ -1126,7 +1181,6 @@
     gap: 1.5rem;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-behavior: smooth;
     padding: 2rem 0 3rem 0;
     margin-bottom: 3rem;
     position: relative;
