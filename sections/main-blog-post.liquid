@@ -7,25 +7,9 @@
 <div class="article-page-background"></div>
 <div class="article-page-wrapper">
   <div class="article-container">
-    {%- comment -%} Logo and Title side by side {%- endcomment -%}
+    {%- comment -%} Blog Title (THE BIDESHI TIMES) {%- endcomment -%}
     <div class="article-header">
-      <div class="article-header-logo">
-        <a href="{{ routes.root_url }}" aria-label="Home">
-          {%- if settings.logo != blank -%}
-            <img
-              src="{{ settings.logo | image_url: width: 300 }}"
-              alt="{{ shop.name | escape }}"
-              width="300"
-              loading="eager"
-            >
-          {%- else -%}
-            <span class="article-logo-fallback">ব</span>
-          {%- endif -%}
-        </a>
-      </div>
-
-      {%- comment -%} Blog Title (THE BIDESHI TIMES) {%- endcomment -%}
-      <h1 class="article-blog-title">THE BIDESHI TIMES</h1>
+      <h1 class="article-blog-title">{{ blog.title | default: article.blog.title | default: "This is a test" | upcase }}</h1>
     </div>
 
     {%- comment -%} Double line separator {%- endcomment -%}
@@ -81,6 +65,7 @@
           src="{{ thumbnail_image | image_url: width: 2000 }}"
           alt="{{ article.title | escape }}"
           width="2000"
+          height="{{ thumbnail_image.height }}"
           loading="eager"
           class="article-featured-image"
         >
@@ -182,31 +167,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2rem;
     margin-bottom: 2rem;
-  }
-
-  .article-header-logo {
-    display: flex;
-    align-items: center;
-  }
-
-  .article-header-logo img {
-    height: 120px;
-    width: auto;
-  }
-
-  .article-logo-fallback {
-    display: inline-block;
-    font-size: 90px;
-    font-weight: 700;
-    color: #000;
   }
 
   /* Blog Title (THE BIDESHI TIMES) */
   .article-blog-title {
-    font-family: 'Playfair Display', 'Georgia', serif;
-    font-size: clamp(2rem, 5vw, 7rem);
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
+    font-size: clamp(2.5rem, 6vw, 8.5rem);
     font-weight: 50;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -242,7 +209,7 @@
     gap: 2rem;
     margin: 0.5rem 0;
     padding: 0.25rem 0;
-    font-family: 'Georgia', serif;
+    font-family: 'ZTFormom', 'Georgia', serif;
     font-size: 0.875rem;
     font-style: italic;
     color: #333;
@@ -298,7 +265,7 @@
   }
 
   .article-image-title-overlay h2 {
-    font-family: 'Playfair Display', 'Georgia', serif;
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
     font-size: 2.5rem;
     font-weight: 700;
     color: #ffffff;
@@ -312,32 +279,334 @@
   /* Article Content */
   .article-content {
     margin: 3rem 0;
-    font-family: 'Georgia', serif;
-    font-size: 1.125rem;
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
     line-height: 1.8;
     color: #333;
   }
 
+  /* Catch-all for all elements inside article-content and rte-formatter - including nested spans */
+  .article-content *,
+  .article-content * *,
+  .article-content * span,
+  .article-content rte-formatter,
+  .article-content rte-formatter *,
+  .article-content rte-formatter * *,
+  .article-content rte-formatter * span,
+  .article-content.rte,
+  .article-content.rte *,
+  .article-content.rte * *,
+  .article-content.rte * span,
+  .article-content .rte,
+  .article-content .rte *,
+  .article-content .rte * *,
+  .article-content .rte * span,
+  .article-content p,
+  .article-content div,
+  .article-content span,
+  .article-content li,
+  .article-content ul,
+  .article-content ol {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+  }
+  
+  /* Force font on all text elements - most aggressive selector */
+  .article-content rte-formatter h1 *,
+  .article-content rte-formatter h2 *,
+  .article-content rte-formatter h3 *,
+  .article-content rte-formatter h4 *,
+  .article-content rte-formatter h5 *,
+  .article-content rte-formatter h6 *,
+  .article-content rte-formatter p *,
+  .article-content rte-formatter blockquote *,
+  .article-content rte-formatter span,
+  /* Target elements with dir attribute (Shopify RTE adds these) */
+  .article-content rte-formatter h1[dir] *,
+  .article-content rte-formatter h2[dir] *,
+  .article-content rte-formatter h3[dir] *,
+  .article-content rte-formatter h4[dir] *,
+  .article-content rte-formatter h5[dir] *,
+  .article-content rte-formatter h6[dir] *,
+  .article-content rte-formatter p[dir] *,
+  .article-content rte-formatter h1[dir] span,
+  .article-content rte-formatter h2[dir] span,
+  .article-content rte-formatter h3[dir] span,
+  .article-content rte-formatter h4[dir] span,
+  .article-content rte-formatter h5[dir] span,
+  .article-content rte-formatter h6[dir] span,
+  .article-content rte-formatter p[dir] span {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+  }
+
+  /* Override CSS variables that might be set by theme */
+  .article-content,
+  .article-content rte-formatter,
+  .article-content.rte,
+  .article-content .rte {
+    --font-h1--family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
+    --font-h2--family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
+    --font-h3--family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
+    --font-h4--family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
+    --font-h5--family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
+    --font-h6--family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
+    --font-paragraph--family: 'ZTFormom', 'Georgia', serif;
+  }
+
+  /* Headers - All sizes with custom font - Target all possible selectors including spans */
   .article-content h1,
+  .article-content h1 span,
   .article-content h2,
+  .article-content h2 span,
   .article-content h3,
+  .article-content h3 span,
   .article-content h4,
+  .article-content h4 span,
   .article-content h5,
-  .article-content h6 {
-    font-family: 'Playfair Display', 'Georgia', serif;
-    font-weight: 700;
+  .article-content h5 span,
+  .article-content h6,
+  .article-content h6 span,
+  .article-content rte-formatter h1,
+  .article-content rte-formatter h1 span,
+  .article-content rte-formatter h2,
+  .article-content rte-formatter h2 span,
+  .article-content rte-formatter h3,
+  .article-content rte-formatter h3 span,
+  .article-content rte-formatter h4,
+  .article-content rte-formatter h4 span,
+  .article-content rte-formatter h5,
+  .article-content rte-formatter h5 span,
+  .article-content rte-formatter h6,
+  .article-content rte-formatter h6 span,
+  .article-content.rte h1,
+  .article-content.rte h1 span,
+  .article-content.rte h2,
+  .article-content.rte h2 span,
+  .article-content.rte h3,
+  .article-content.rte h3 span,
+  .article-content.rte h4,
+  .article-content.rte h4 span,
+  .article-content.rte h5,
+  .article-content.rte h5 span,
+  .article-content.rte h6,
+  .article-content.rte h6 span,
+  .article-content .rte h1,
+  .article-content .rte h1 span,
+  .article-content .rte h2,
+  .article-content .rte h2 span,
+  .article-content .rte h3,
+  .article-content .rte h3 span,
+  .article-content .rte h4,
+  .article-content .rte h4 span,
+  .article-content .rte h5,
+  .article-content .rte h5 span,
+  .article-content .rte h6,
+  .article-content .rte h6 span {
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif !important;
+    font-weight: 700 !important;
     margin-top: 2rem;
     margin-bottom: 1rem;
-    color: #000;
+    color: #000 !important;
   }
 
-  .article-content p {
+  /* Individual header sizes with appropriate font sizes - including spans */
+  .article-content h1,
+  .article-content h1 span,
+  .article-content rte-formatter h1,
+  .article-content rte-formatter h1 span,
+  .article-content.rte h1,
+  .article-content.rte h1 span,
+  .article-content .rte h1,
+  .article-content .rte h1 span {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .article-content h2,
+  .article-content h2 span,
+  .article-content rte-formatter h2,
+  .article-content rte-formatter h2 span,
+  .article-content.rte h2,
+  .article-content.rte h2 span,
+  .article-content .rte h2,
+  .article-content .rte h2 span {
+    font-size: 2rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .article-content h3,
+  .article-content h3 span,
+  .article-content rte-formatter h3,
+  .article-content rte-formatter h3 span,
+  .article-content.rte h3,
+  .article-content.rte h3 span,
+  .article-content .rte h3,
+  .article-content .rte h3 span {
+    font-size: 1.75rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .article-content h4,
+  .article-content h4 span,
+  .article-content rte-formatter h4,
+  .article-content rte-formatter h4 span,
+  .article-content.rte h4,
+  .article-content.rte h4 span,
+  .article-content .rte h4,
+  .article-content .rte h4 span {
+    font-size: 1.5rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .article-content h5,
+  .article-content h5 span,
+  .article-content rte-formatter h5,
+  .article-content rte-formatter h5 span,
+  .article-content.rte h5,
+  .article-content.rte h5 span,
+  .article-content .rte h5,
+  .article-content .rte h5 span {
+    font-size: 1.25rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .article-content h6,
+  .article-content h6 span,
+  .article-content rte-formatter h6,
+  .article-content rte-formatter h6 span,
+  .article-content.rte h6,
+  .article-content.rte h6 span,
+  .article-content .rte h6,
+  .article-content .rte h6 span {
+    font-size: 1.1rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Paragraphs - Target all possible selectors including spans */
+  .article-content p,
+  .article-content p span,
+  .article-content rte-formatter p,
+  .article-content rte-formatter p span,
+  .article-content.rte p,
+  .article-content.rte p span,
+  .article-content .rte p,
+  .article-content .rte p span {
     margin-bottom: 1.5rem;
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
+    line-height: 1.8 !important;
   }
 
+  /* Blockquotes - Target all possible selectors */
+  .article-content blockquote,
+  .article-content rte-formatter blockquote,
+  .article-content.rte blockquote,
+  .article-content .rte blockquote {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
+    font-style: italic !important;
+    line-height: 1.8 !important;
+    margin-inline: 1.5em 2.3em;
+    margin-block: 3.8em;
+    padding-inline-start: 0.8em;
+    border-inline-start: 1.5px solid rgba(0, 0, 0, 0.25);
+    color: #333 !important;
+  }
+
+  .article-content blockquote p,
+  .article-content rte-formatter blockquote p,
+  .article-content.rte blockquote p,
+  .article-content .rte blockquote p {
+    margin-bottom: 1rem;
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+  }
+
+  .article-content blockquote p:last-child,
+  .article-content rte-formatter blockquote p:last-child,
+  .article-content.rte blockquote p:last-child,
+  .article-content .rte blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Lists - ensure custom font is applied */
+  .article-content ul,
+  .article-content ol {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
+    line-height: 1.8;
+  }
+
+  .article-content li {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Text formatting elements */
+  .article-content strong,
+  .article-content b {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-weight: 700;
+  }
+
+  .article-content em,
+  .article-content i {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-style: italic;
+  }
+
+  /* Code and pre elements */
+  .article-content code,
+  .article-content pre {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+  }
+
+  /* Override .rte class font-family */
+  .article-content.rte,
+  .article-content .rte {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
+  }
+
+  .article-content.rte *,
+  .article-content .rte * {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
+    font-size: 1.19rem !important;
+  }
+
+  /* Override font size for footnote superscripts */
+  .article-content a.fn-ref sup,
+  .article-content .rte a.fn-ref sup,
+  .article-content.rte a.fn-ref sup {
+    font-size: 0.65em !important;
+  }
+
+  /* Remove underline from footnote references */
+  .article-content a.fn-ref,
+  .article-content .rte a.fn-ref,
+  .article-content.rte a.fn-ref {
+    text-decoration: none !important;
+  }
+
+  /* Links */
   .article-content a {
+    font-family: 'ZTFormom', 'Georgia', serif !important;
     color: #0066cc;
     text-decoration: underline;
+  }
+
+  /* References toggle - make it much bigger with maximum specificity */
+  .fn-toggle,
+  .article-content .fn-toggle,
+  .article-content span.fn-toggle,
+  span.fn-toggle,
+  .article-content .fn-toggle * {
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif !important;
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+    line-height: 1.2 !important;
+    color: #000 !important;
   }
 
   .article-content a:hover {
@@ -422,7 +691,7 @@
   }
 
   .tooltip-title {
-    font-family: 'Georgia', serif;
+    font-family: 'ZTFormom', 'Georgia', serif;
     font-size: 16px;
     font-weight: 600;
     font-style: italic;
@@ -445,7 +714,7 @@
 
   .tooltip-text {
     padding: 10px 14px 14px 14px;
-    font-family: 'Georgia', serif;
+    font-family: 'ZTFormom', 'Georgia', serif;
     font-size: 13px;
     line-height: 1.5;
     color: #000000;
@@ -514,7 +783,7 @@
   }
 
   .article-comments-heading {
-    font-family: 'Playfair Display', 'Georgia', serif;
+    font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif;
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 2rem;
@@ -564,16 +833,8 @@
       gap: 1rem;
     }
 
-    .article-header-logo img {
-      height: 60px;
-    }
-
-    .article-logo-fallback {
-      font-size: 50px;
-    }
-
     .article-blog-title {
-      font-size: clamp(1.2rem, 7vw, 3rem);
+      font-size: clamp(1.5rem, 8vw, 3.5rem);
       letter-spacing: 0.08em;
       text-align: center;
     }
@@ -606,8 +867,59 @@
     }
 
     .article-content {
-      font-size: 1rem;
+      font-size: 1.07rem !important;
       line-height: 1.7;
+    }
+
+    .article-content *,
+    .article-content p,
+    .article-content div,
+    .article-content span,
+    .article-content li,
+    .article-content ul,
+    .article-content ol,
+    .article-content.rte *,
+    .article-content .rte * {
+      font-size: 1.07rem !important;
+    }
+
+    /* Mobile header sizes */
+    .article-content h1 {
+      font-size: 2rem !important;
+      line-height: 1.2;
+    }
+
+    .article-content h2 {
+      font-size: 1.75rem !important;
+      line-height: 1.3;
+    }
+
+    .article-content h3 {
+      font-size: 1.5rem !important;
+      line-height: 1.3;
+    }
+
+    .article-content h4 {
+      font-size: 1.35rem !important;
+      line-height: 1.4;
+    }
+
+    .article-content h5 {
+      font-size: 1.2rem !important;
+      line-height: 1.4;
+    }
+
+    .article-content h6 {
+      font-size: 1.07rem !important;
+      line-height: 1.5;
+    }
+
+    /* Mobile blockquotes */
+    .article-content blockquote {
+      font-size: 1.07rem !important;
+      margin-inline: 1em 1.5em;
+      margin-block: 2.5em;
+      padding-inline-start: 0.6em;
     }
 
     .article-separator {
@@ -649,16 +961,8 @@
   }
 
   @media screen and (max-width: 1024px) and (min-width: 750px) {
-    .article-header-logo img {
-      height: 90px;
-    }
-
-    .article-logo-fallback {
-      font-size: 70px;
-    }
-
     .article-blog-title {
-      font-size: clamp(2rem, 5vw, 5rem);
+      font-size: clamp(2.5rem, 6vw, 6rem);
     }
 
     .article-featured-image-wrapper {

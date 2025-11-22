@@ -32,6 +32,32 @@
             "background_color": "#00000026",
             "corner_radius": 0,
             "padding-block-start": 48,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "subtitle": {
+          "type": "text",
+          "name": "Subtitle",
+          "settings": {
+            "text": "<p>A Bideshi Project</p>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "body",
+            "font": "var(--font-primary--family)",
+            "font_size": "",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "",
+            "background": false,
+            "background_color": "transparent",
+            "corner_radius": 0,
+            "padding-block-start": 0,
             "padding-block-end": 48,
             "padding-inline-start": 0,
             "padding-inline-end": 0
@@ -115,7 +141,8 @@
         }
       },
       "block_order": [
-        "title"
+        "title",
+        "subtitle"
       ],
       "settings": {
         "banner_logo": "shopify://shop_images/Bideshi_Logo.png",

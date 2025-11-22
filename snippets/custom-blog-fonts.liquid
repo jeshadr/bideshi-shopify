@@ -1,0 +1,23 @@
+{%- comment -%} Custom ZT Formom font for blog pages {%- endcomment -%}
+<style>
+  @font-face {
+    font-family: 'ZTFormom';
+    src: url('{{ 'ZT Formom.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'ZT Formom.woff' | asset_url }}') format('woff'),
+         url('{{ 'ZT Formom.ttf' | asset_url }}') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'ZTFormom';
+    src: url('{{ 'ZT Formom Italic.woff2' | asset_url }}') format('woff2'),
+         url('{{ 'ZT Formom Italic.woff' | asset_url }}') format('woff'),
+         url('{{ 'ZT Formom Italic.ttf' | asset_url }}') format('truetype');
+    font-style: italic;
+    font-weight: normal;
+    font-display: swap;
+  }
+</style>
+
