@@ -75,7 +75,7 @@
     
     // Title position range
     const titleTopStart = 9;   // 15rem starting position (matches bottom padding)
-    const titleTopEnd = 1;      // 1rem ending position (aligned with buttons)
+    const titleTopEnd = -4;      // 1rem ending position (aligned with buttons)
     
     // Logo size range (in px)
     const maxLogoSize = 28;    // Starting size
@@ -148,7 +148,7 @@
       
       // Gradient height should only cover the compact header area (title at 1rem + some buffer)
       // Fixed height in pixels to match compact header size
-      stickyHeader.style.setProperty('--gradient-height', '120px');
+      stickyHeader.style.setProperty('--gradient-height', '100px');
       
       // Fade out subtitle as user scrolls
       if (subtitle) {
@@ -694,7 +694,7 @@
   .blog-sticky-header {
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
+    z-index: 403 !important;  /* Above gradient overlay */
     margin-inline: calc(50% - 50vw) !important;
     width: 100vw !important;
     max-width: 100vw !important;
@@ -714,18 +714,16 @@
       display: none !important;
     }
   }
-  /* Full-width gradient layer - only covers compact header area */
+  /* Full-width gradient overlay - Artslooker approach for consistency */
   .blog-sticky-header::before {
     content: '';
-    position: absolute;
+    position: fixed;  /* Fixed positioning for consistency across devices */
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
-    height: var(--gradient-height, 120px); /* fixed height to only cover compact header */
-    max-height: 150px; /* cap the maximum height */
+    left: 0;
+    width: 100%;
+    height: 100px;  /* Fixed height - never stretches */
     pointer-events: none;
-    z-index: 0;
+    z-index: 401;  /* Above content, below logo/nav */
     background: linear-gradient(
       to bottom,
       rgba(255, 255, 255, var(--sticky-bg-opacity, 0)) 0%,
@@ -734,13 +732,14 @@
       rgba(255, 255, 255, 0) 90%,
       transparent 100%
     );
-    backdrop-filter: blur(calc(8px * var(--sticky-bg-opacity, 0)));
+    opacity: var(--sticky-bg-opacity, 0);
+    transition: opacity 0.2s ease-out;
   }
 
-  /* Ensure title sits above gradient but below buttons */
+  /* Ensure title sits above gradient */
   .blog-sticky-header .text-block {
     position: relative;
-    z-index: 1;
+    z-index: 402;  /* Above gradient (401), below nav (403) */
   }
 
   /* Category navigation buttons - fixed at compact size */
@@ -748,7 +747,7 @@
     position: absolute;
     top: 1rem; /* fixed position */
     right: 2rem;
-    z-index: 2;
+    z-index: 404; /* Above gradient overlay */
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -763,7 +762,7 @@
     position: absolute;
     top: 1rem; /* fixed position, same as buttons */
     left: 2rem;
-    z-index: 2;
+    z-index: 404; /* Above gradient overlay */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -794,7 +793,7 @@
     position: absolute;
     top: 1rem; /* fixed position, aligned with logo */
     left: 4.5rem; /* positioned after logo with reduced gap */
-    z-index: 2;
+    z-index: 404; /* Above gradient overlay */
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -1001,7 +1000,7 @@
   @media screen and (max-width: 749px) {
     /* Reduce top/bottom padding for title on mobile - add space for logo */
     .blog-sticky-header .text-block {
-      padding: 1.75rem 0 0.75rem 0 !important; /* Increased top padding for logo space */
+      padding: 1rem 0 0.75rem 0 !important; /* Increased top padding for logo space */
     }
 
     .blog-sticky-header .text-block p {
