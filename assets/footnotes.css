@@ -199,7 +199,7 @@ span.fn-toggle,
 .article-content span.fn-toggle {
   display: inline-block !important;
   color: #000 !important;
-  font-family: 'ZTFormom', 'Playfair Display', 'Georgia', serif !important;
+  font-family: 'Times New Roman', 'Times', serif !important;
   font-size: 2.5rem !important;
   font-weight: 700 !important;
   cursor: pointer !important;
